@@ -30,11 +30,16 @@ export function Bowl({ rotate, translateY, opacity }: Props) {
 
 const styles = StyleSheet.create({
   shell: {
+    position: 'absolute',
+    left: 0,
+    right: 0,
+    bottom: 0,
     width: LAYOUT.bowlWidth,
     height: LAYOUT.bowlHeight,
     alignItems: 'center',
     justifyContent: 'flex-end',
     zIndex: 20,
+    elevation: 20,
   },
   bowl: {
     width: LAYOUT.bowlWidth,
