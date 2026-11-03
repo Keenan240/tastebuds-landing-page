@@ -15,17 +15,20 @@ type Props = {
   peek: SharedValue<number>;
   launch: SharedValue<number>;
   shrink: SharedValue<number>;
-  bowlRimY: number;
-  screenWidth: number;
+  /** Distance from bowl rim up to the final top logo position. */
+  launchTravel: number;
 };
 
+/**
+ * Lives in the bowl stage under the bowl silhouette so the smile peeks
+ * from behind the rim, then launches upward past it.
+ */
 export function SmileLogo({
   opacity,
   peek,
   launch,
   shrink,
-  bowlRimY,
-  screenWidth,
+  launchTravel,
 }: Props) {
   const style = useAnimatedStyle(() => {
     const peekSize = LAYOUT.logoPeekSize;
@@ -42,31 +45,33 @@ export function SmileLogo({
       Extrapolation.CLAMP,
     );
 
-    const peekY = interpolate(
+    // Peek: rise from inside bowl (-size) to mostly above rim
+    const peekOffset = interpolate(
       peek.value,
       [0, 1],
-      [bowlRimY + 28, bowlRimY - peekSize * 0.55],
+      [size * 0.55, -size * 0.62],
       Extrapolation.CLAMP,
     );
 
-    const topY = interpolate(
-      shrink.value,
+    const launchOffset = interpolate(
+      launch.value,
       [0, 1],
-      [LAYOUT.logoTopOffset, LAYOUT.logoFinalOffset],
+      [0, -launchTravel],
       Extrapolation.CLAMP,
     );
 
-    const y = interpolate(launch.value, [0, 1], [peekY, topY]);
+    const shrinkNudge = interpolate(shrink.value, [0, 1], [0, -10]);
 
     return {
       opacity: opacity.value,
       width: size,
       height: size * 1.25,
-      left: screenWidth / 2 - size / 2,
-      top: y,
+      left: (LAYOUT.bowlWidth - size) / 2,
+      bottom: LAYOUT.bowlHeight + peekOffset,
       transform: [
+        { translateY: launchOffset + shrinkNudge },
         {
-          scale: interpolate(peek.value, [0, 0.7, 1], [0.6, 1.08, 1]),
+          scale: interpolate(peek.value, [0, 0.7, 1], [0.55, 1.1, 1]),
         },
       ],
     };
@@ -82,6 +87,6 @@ export function SmileLogo({
 const styles = StyleSheet.create({
   wrap: {
     position: 'absolute',
-    zIndex: 20,
+    zIndex: 8,
   },
 });

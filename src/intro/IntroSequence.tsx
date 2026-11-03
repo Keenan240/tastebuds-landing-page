@@ -1,6 +1,5 @@
-import React, { useCallback, useMemo, useState } from 'react';
+import React, { useMemo } from 'react';
 import {
-  LayoutChangeEvent,
   Pressable,
   StyleSheet,
   Text,
@@ -25,20 +24,21 @@ type Props = {
 };
 
 export function IntroSequence({ fontFamily, onComplete }: Props) {
-  const { height, width } = useWindowDimensions();
+  const { height } = useWindowDimensions();
   const insets = useSafeAreaInsets();
   const timeline = useIntroTimeline(onComplete);
-  const [bowlRimY, setBowlRimY] = useState(420);
 
   const bowlBottom = useMemo(
     () => Math.max(120, height * LAYOUT.bowlBottomRatio),
     [height],
   );
 
-  const onBowlSlotLayout = useCallback((e: LayoutChangeEvent) => {
-    const { y, height: slotH } = e.nativeEvent.layout;
-    setBowlRimY(y + slotH - LAYOUT.bowlHeight);
-  }, []);
+  // How far the smile must travel from bowl rim to near the top of the screen
+  const launchTravel = useMemo(() => {
+    const rimFromBottom = bowlBottom + LAYOUT.bowlHeight;
+    const targetFromBottom = height - (insets.top + LAYOUT.logoTopOffset + 40);
+    return Math.max(280, targetFromBottom - rimFromBottom);
+  }, [bowlBottom, height, insets.top]);
 
   return (
     <View style={[styles.root, { paddingTop: insets.top }]}>
@@ -51,22 +51,9 @@ export function IntroSequence({ fontFamily, onComplete }: Props) {
         fontFamily={fontFamily}
       />
 
-      <SmileLogo
-        opacity={timeline.logoOpacity}
-        peek={timeline.logoPeek}
-        launch={timeline.logoLaunch}
-        shrink={timeline.logoShrink}
-        bowlRimY={bowlRimY}
-        screenWidth={width}
-      />
-
       <Wordmark opacity={timeline.wordmarkOpacity} fontFamily={fontFamily} />
 
-      {/* Food layer sits above bowl so drops stay vertical while bowl tilts */}
-      <View
-        style={[styles.bowlSlot, { bottom: bowlBottom }]}
-        onLayout={onBowlSlotLayout}
-      >
+      <View style={[styles.bowlSlot, { bottom: bowlBottom }]}>
         <View style={styles.stage}>
           {FOOD_IDS.map((id, index) => (
             <FoodItem
@@ -78,6 +65,16 @@ export function IntroSequence({ fontFamily, onComplete }: Props) {
               bowlTranslateY={timeline.bowlTranslateY}
             />
           ))}
+
+          {/* Behind the bowl so only the top peeks over the rim */}
+          <SmileLogo
+            opacity={timeline.logoOpacity}
+            peek={timeline.logoPeek}
+            launch={timeline.logoLaunch}
+            shrink={timeline.logoShrink}
+            launchTravel={launchTravel}
+          />
+
           <Bowl
             rotate={timeline.bowlRotate}
             translateY={timeline.bowlTranslateY}
