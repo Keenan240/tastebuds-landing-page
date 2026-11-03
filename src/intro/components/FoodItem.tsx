@@ -26,9 +26,17 @@ type Props = {
   drop: SharedValue<number>;
   collapse: SharedValue<number>;
   opacity: SharedValue<number>;
+  /** Shared with bowl exit so food rides the bowl off-screen if still visible. */
+  bowlTranslateY: SharedValue<number>;
 };
 
-export function FoodItem({ id, drop, collapse, opacity }: Props) {
+export function FoodItem({
+  id,
+  drop,
+  collapse,
+  opacity,
+  bowlTranslateY,
+}: Props) {
   const start = FOOD_START[id];
   const peek = FOOD_PEEK[id];
 
@@ -58,21 +66,16 @@ export function FoodItem({ id, drop, collapse, opacity }: Props) {
       Extrapolation.CLAMP,
     );
 
-    // Collapse into bowl center
     const x = interpolate(collapse.value, [0, 1], [landedX, 0]);
-    const y = interpolate(collapse.value, [0, 1], [landedY, 12]);
-    const scale = interpolate(
-      collapse.value,
-      [0, 1],
-      [landedScale, 0.15],
-    );
+    const y = interpolate(collapse.value, [0, 1], [landedY, 18]);
+    const scale = interpolate(collapse.value, [0, 1], [landedScale, 0.12]);
     const rot = interpolate(collapse.value, [0, 1], [landedRot, 0]);
 
     return {
       opacity: opacity.value,
       transform: [
         { translateX: x },
-        { translateY: y },
+        { translateY: y + bowlTranslateY.value },
         { rotate: `${rot}deg` },
         { scale },
       ],
@@ -80,7 +83,7 @@ export function FoodItem({ id, drop, collapse, opacity }: Props) {
   });
 
   return (
-    <Animated.View style={[styles.wrap, style]}>
+    <Animated.View style={[styles.wrap, style]} pointerEvents="none">
       <Image source={SOURCES[id]} style={styles.image} resizeMode="contain" />
     </Animated.View>
   );
@@ -92,7 +95,9 @@ const styles = StyleSheet.create({
     width: LAYOUT.foodSize,
     height: LAYOUT.foodSize,
     left: (LAYOUT.bowlWidth - LAYOUT.foodSize) / 2,
-    bottom: LAYOUT.bowlHeight - 18,
+    // Sit on the rim of the bowl shell (food layer stacks above bowl)
+    bottom: LAYOUT.bowlHeight - LAYOUT.foodSize / 2,
+    zIndex: 12,
   },
   image: {
     width: '100%',

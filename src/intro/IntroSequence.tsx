@@ -62,15 +62,12 @@ export function IntroSequence({ fontFamily, onComplete }: Props) {
 
       <Wordmark opacity={timeline.wordmarkOpacity} fontFamily={fontFamily} />
 
+      {/* Food layer sits above bowl so drops stay vertical while bowl tilts */}
       <View
         style={[styles.bowlSlot, { bottom: bowlBottom }]}
         onLayout={onBowlSlotLayout}
       >
-        <Bowl
-          rotate={timeline.bowlRotate}
-          translateY={timeline.bowlTranslateY}
-          opacity={timeline.bowlOpacity}
-        >
+        <View style={styles.stage}>
           {FOOD_IDS.map((id, index) => (
             <FoodItem
               key={`${id}-${timeline.replayToken}`}
@@ -78,9 +75,15 @@ export function IntroSequence({ fontFamily, onComplete }: Props) {
               drop={timeline.foods[index].drop}
               collapse={timeline.foodCollapse}
               opacity={timeline.foods[index].opacity}
+              bowlTranslateY={timeline.bowlTranslateY}
             />
           ))}
-        </Bowl>
+          <Bowl
+            rotate={timeline.bowlRotate}
+            translateY={timeline.bowlTranslateY}
+            opacity={timeline.bowlOpacity}
+          />
+        </View>
       </View>
 
       <LandingChrome
@@ -118,6 +121,12 @@ const styles = StyleSheet.create({
     right: 0,
     alignItems: 'center',
     zIndex: 10,
+  },
+  stage: {
+    width: LAYOUT.bowlWidth,
+    height: LAYOUT.bowlHeight + 80,
+    justifyContent: 'flex-end',
+    overflow: 'visible',
   },
   replay: {
     position: 'absolute',

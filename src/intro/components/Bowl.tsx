@@ -9,11 +9,10 @@ type Props = {
   rotate: SharedValue<number>;
   translateY: SharedValue<number>;
   opacity: SharedValue<number>;
-  children?: React.ReactNode;
 };
 
-/** Dark brown semicircle bowl with overflow clip so contents peek above the rim. */
-export function Bowl({ rotate, translateY, opacity, children }: Props) {
+/** Dark brown semicircle bowl. */
+export function Bowl({ rotate, translateY, opacity }: Props) {
   const shellStyle = useAnimatedStyle(() => ({
     opacity: opacity.value,
     transform: [
@@ -24,10 +23,6 @@ export function Bowl({ rotate, translateY, opacity, children }: Props) {
 
   return (
     <Animated.View style={[styles.shell, shellStyle]}>
-      {/* Peek zone above the rim — children live here, clipped to bowl silhouette via mask stack */}
-      <View style={styles.stage} pointerEvents="none">
-        {children}
-      </View>
       <View style={styles.bowl} />
     </Animated.View>
   );
@@ -36,15 +31,9 @@ export function Bowl({ rotate, translateY, opacity, children }: Props) {
 const styles = StyleSheet.create({
   shell: {
     width: LAYOUT.bowlWidth,
-    height: LAYOUT.bowlHeight + 70,
+    height: LAYOUT.bowlHeight,
     alignItems: 'center',
     justifyContent: 'flex-end',
-  },
-  stage: {
-    ...StyleSheet.absoluteFill,
-    alignItems: 'center',
-    justifyContent: 'flex-end',
-    paddingBottom: LAYOUT.bowlHeight - 8,
   },
   bowl: {
     width: LAYOUT.bowlWidth,
