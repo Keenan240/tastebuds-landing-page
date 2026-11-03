@@ -27,15 +27,18 @@ type Props = {
   collapse: SharedValue<number>;
   opacity: SharedValue<number>;
   bowlTranslateY: SharedValue<number>;
+  /** Negative Y that places this item fully above the top of the viewport. */
+  startY: number;
 };
 
-/** Stacked behind the bowl — drops from above, nests tightly in the rim. */
+/** Stacked behind the bowl — starts off-screen above, falls into the rim. */
 export function FoodItem({
   id,
   drop,
   collapse,
   opacity,
   bowlTranslateY,
+  startY,
 }: Props) {
   const start = FOOD_START[id];
   const peek = FOOD_PEEK[id];
@@ -50,7 +53,7 @@ export function FoodItem({
     const landedY = interpolate(
       drop.value,
       [0, 1],
-      [start.y, peek.y],
+      [startY, peek.y],
       Extrapolation.CLAMP,
     );
     const landedRot = interpolate(
@@ -95,7 +98,6 @@ const styles = StyleSheet.create({
     width: LAYOUT.foodSize,
     height: LAYOUT.foodSize,
     left: (LAYOUT.bowlWidth - LAYOUT.foodSize) / 2,
-    // Deep into the bowl so the rim covers the lower half
     bottom: LAYOUT.bowlHeight - LAYOUT.foodSize * 0.55,
     zIndex: 4,
   },

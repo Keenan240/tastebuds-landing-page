@@ -12,16 +12,12 @@ export const COLORS = {
   desktopBackdrop: '#E8E4D9',
 } as const;
 
-/**
- * Exactly 3 lines: "you hungry" on line 1, then y's wrapping to lines 2–3.
- * Wide enough at 61px Urbanist to bleed past the phone edges.
- */
+/** Kept for Part 2 hero — not used in the bowl intro anymore. */
 export const HUNGRY_LINES = [
   'you hungry',
   'yyyyyyyyyyyyyyyyyyyy',
   'yyyyyyyyyyyyyyyyy?',
 ] as const;
-
 export const HUNGRY_TEXT = HUNGRY_LINES.join('\n');
 
 /** Bowl starts tilted clockwise (degrees). */
@@ -29,51 +25,48 @@ export const BOWL_START_TILT = 16;
 
 export const FOOD_COUNT = 4;
 
-/** Drop order: pepper first (lowest), then leek, tomato, radish (top of cascade). */
+/** Drop order: pepper first (lowest), then leek, tomato, radish (highest / last). */
 export const FOOD_IDS = ['pepper', 'leek', 'tomato', 'radish'] as const;
 export type FoodId = (typeof FOOD_IDS)[number];
 
 export const DURATIONS = {
-  foodDrop: 780,
-  foodStagger: 130,
+  foodDrop: 900,
+  foodStagger: 140,
   bowlStraighten: 380,
-  holdAfterStraighten: 280,
-  collapse: 560,
-  holdAfterPeek: 360,
+  holdAfterStraighten: 300,
+  /** Food sinks away — bowl reads empty */
+  collapse: 480,
+  /** Beat on empty bowl before logo appears */
+  holdEmpty: 420,
+  /** Logo rises to peek */
+  peek: 520,
+  holdAfterPeek: 380,
   launch: 560,
-  holdAfterLaunch: 220,
-  typeChar: 38,
-  holdAfterType: 280,
-  soften: 480,
-  holdAfterSoften: 240,
-  handoff: 620,
+  holdAfterLaunch: 200,
+  handoff: 520,
 } as const;
 
 export const SPRINGS = {
-  drop: { damping: 13, stiffness: 150, mass: 0.95 },
+  drop: { damping: 14, stiffness: 120, mass: 1.05 },
   bowl: { damping: 16, stiffness: 180, mass: 0.85 },
   peek: { damping: 15, stiffness: 170, mass: 0.8 },
   launch: { damping: 13, stiffness: 200, mass: 0.75 },
   soft: { damping: 20, stiffness: 140, mass: 1 },
 } as const;
 
-/** iPhone 14/15 logical frame used for desktop preview shell. */
 export const IPHONE = {
   width: 390,
   height: 844,
   radius: 44,
 } as const;
 
-/**
- * Layout for a ~390pt-wide phone. Figma hungry type: Urbanist Semibold 61.
- * Smile asset native ratio is 53×71 — always scale with that aspect.
- */
 export const LAYOUT = {
   bowlWidth: 248,
   bowlHeight: 124,
   bowlBottomRatio: 0.32,
-  /** Large food — packed into the bowl with overlap, no gaps */
   foodSize: 120,
+  /** Vertical gap between cascading items while off-screen / falling */
+  foodCascadeGap: 130,
   logoPeekSize: 52,
   logoTopSize: 44,
   logoFinalSize: 32,
@@ -83,7 +76,6 @@ export const LAYOUT = {
   hungryLineHeight: 66,
 } as const;
 
-/** smile.png / mark aspect: height / width */
 export const SMILE_ASPECT = 71 / 53;
 
 /**
@@ -100,13 +92,13 @@ export const FOOD_PEEK: Record<
   pepper: { x: 68, y: -10, rotate: 18, scale: 1.05 },
 };
 
-/** Cascade from above the top of the screen into the bowl (column drop). */
+/** Horizontal / rotation only — vertical start is computed from viewport height. */
 export const FOOD_START: Record<
   FoodId,
-  { x: number; y: number; rotate: number }
+  { x: number; rotate: number }
 > = {
-  pepper: { x: 6, y: -420, rotate: -8 },
-  leek: { x: -4, y: -560, rotate: 24 },
-  tomato: { x: 2, y: -700, rotate: -6 },
-  radish: { x: -8, y: -840, rotate: 14 },
+  pepper: { x: 6, rotate: -8 },
+  leek: { x: -4, rotate: 24 },
+  tomato: { x: 2, rotate: -6 },
+  radish: { x: -8, rotate: 14 },
 };

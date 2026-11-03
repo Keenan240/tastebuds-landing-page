@@ -13,15 +13,18 @@ import {
   DURATIONS,
   FOOD_COUNT,
   FOOD_IDS,
-  HUNGRY_TEXT,
   SPRINGS,
 } from './phases';
 
 export type IntroTimeline = ReturnType<typeof useIntroTimeline>;
 
+/**
+ * Bowl intro only:
+ * drop → straighten → collapse (empty) → pause → logo peek → pause → launch → handoff
+ * (Hungry type lives in Part 2.)
+ */
 export function useIntroTimeline(onComplete?: () => void) {
   const [replayToken, setReplayToken] = useState(0);
-  const [typedLength, setTypedLength] = useState(0);
   const [phaseLabel, setPhaseLabel] = useState('idle');
 
   const bowlRotate = useSharedValue(BOWL_START_TILT);
@@ -51,16 +54,9 @@ export function useIntroTimeline(onComplete?: () => void) {
   const logoShrink = useSharedValue(0);
   const logoOpacity = useSharedValue(0);
 
-  const textSoften = useSharedValue(0);
-  const textBlur = useSharedValue(0);
-
   const wordmarkOpacity = useSharedValue(0);
   const chromeOpacity = useSharedValue(0);
   const chromeTranslateY = useSharedValue(24);
-
-  const setTyped = useCallback((n: number) => {
-    setTypedLength(n);
-  }, []);
 
   const markPhase = useCallback((label: string) => {
     setPhaseLabel(label);
@@ -84,8 +80,6 @@ export function useIntroTimeline(onComplete?: () => void) {
     cancelAnimation(logoLaunch);
     cancelAnimation(logoShrink);
     cancelAnimation(logoOpacity);
-    cancelAnimation(textSoften);
-    cancelAnimation(textBlur);
     cancelAnimation(wordmarkOpacity);
     cancelAnimation(chromeOpacity);
     cancelAnimation(chromeTranslateY);
@@ -102,12 +96,9 @@ export function useIntroTimeline(onComplete?: () => void) {
     logoLaunch.value = 0;
     logoShrink.value = 0;
     logoOpacity.value = 0;
-    textSoften.value = 0;
-    textBlur.value = 0;
     wordmarkOpacity.value = 0;
     chromeOpacity.value = 0;
     chromeTranslateY.value = 24;
-    setTypedLength(0);
     setPhaseLabel('idle');
   }, [
     bowlOpacity,
@@ -121,8 +112,6 @@ export function useIntroTimeline(onComplete?: () => void) {
     logoOpacity,
     logoPeek,
     logoShrink,
-    textBlur,
-    textSoften,
     wordmarkOpacity,
   ]);
 
@@ -162,21 +151,29 @@ export function useIntroTimeline(onComplete?: () => void) {
     const afterStraighten =
       dropEnd + 80 + DURATIONS.bowlStraighten + DURATIONS.holdAfterStraighten;
 
+    // Collapse only — bowl goes empty. Logo stays hidden.
     later(afterStraighten, () => {
       markPhase('collapse');
       foodCollapse.value = withSpring(1, SPRINGS.peek);
-      logoOpacity.value = withTiming(1, { duration: 200 });
-      logoPeek.value = withSpring(1, SPRINGS.peek);
       foods.forEach((f, i) => {
         f.opacity.value = withDelay(
-          i * 45,
-          withTiming(0, { duration: DURATIONS.collapse * 0.65 }),
+          i * 40,
+          withTiming(0, { duration: DURATIONS.collapse * 0.7 }),
         );
       });
     });
 
-    const afterPeek =
-      afterStraighten + DURATIONS.collapse + DURATIONS.holdAfterPeek;
+    const afterEmpty =
+      afterStraighten + DURATIONS.collapse + DURATIONS.holdEmpty;
+
+    // Pause ended — logo peeks from empty bowl
+    later(afterEmpty, () => {
+      markPhase('peek');
+      logoOpacity.value = withTiming(1, { duration: 220 });
+      logoPeek.value = withSpring(1, SPRINGS.peek);
+    });
+
+    const afterPeek = afterEmpty + DURATIONS.peek + DURATIONS.holdAfterPeek;
 
     later(afterPeek, () => {
       markPhase('launch');
@@ -199,56 +196,25 @@ export function useIntroTimeline(onComplete?: () => void) {
       afterPeek + DURATIONS.launch + DURATIONS.holdAfterLaunch;
 
     later(afterLaunch, () => {
-      markPhase('type');
-      const total = HUNGRY_TEXT.length;
-      const typeDuration = total * DURATIONS.typeChar;
-
-      for (let i = 1; i <= total; i++) {
-        later(i * DURATIONS.typeChar, () => setTyped(i));
-      }
-
-      later(typeDuration + DURATIONS.holdAfterType, () => {
-        markPhase('soften');
-        textSoften.value = withTiming(1, {
-          duration: DURATIONS.soften,
-          easing: Easing.inOut(Easing.cubic),
-        });
-        logoShrink.value = withSpring(1, SPRINGS.soft);
+      markPhase('handoff');
+      logoOpacity.value = withTiming(0, {
+        duration: DURATIONS.handoff * 0.45,
+        easing: Easing.in(Easing.cubic),
       });
-
-      const afterSoften =
-        typeDuration +
-        DURATIONS.holdAfterType +
-        DURATIONS.soften +
-        DURATIONS.holdAfterSoften;
-
-      later(afterSoften, () => {
-        markPhase('handoff');
-        textBlur.value = withTiming(1, {
+      logoShrink.value = withSpring(1, SPRINGS.soft);
+      wordmarkOpacity.value = withTiming(1, {
+        duration: DURATIONS.handoff * 0.85,
+        easing: Easing.out(Easing.cubic),
+      });
+      chromeOpacity.value = withDelay(
+        80,
+        withTiming(1, {
           duration: DURATIONS.handoff,
-          easing: Easing.inOut(Easing.cubic),
-        });
-        logoOpacity.value = withTiming(0, {
-          duration: DURATIONS.handoff * 0.45,
-          easing: Easing.in(Easing.cubic),
-        });
-        wordmarkOpacity.value = withTiming(1, {
-          duration: DURATIONS.handoff * 0.85,
           easing: Easing.out(Easing.cubic),
-        });
-        chromeOpacity.value = withDelay(
-          100,
-          withTiming(1, {
-            duration: DURATIONS.handoff,
-            easing: Easing.out(Easing.cubic),
-          }),
-        );
-        chromeTranslateY.value = withDelay(
-          100,
-          withSpring(0, SPRINGS.soft),
-        );
-        later(DURATIONS.handoff + 100, () => finish());
-      });
+        }),
+      );
+      chromeTranslateY.value = withDelay(80, withSpring(0, SPRINGS.soft));
+      later(DURATIONS.handoff + 80, () => finish());
     });
 
     return () => {
@@ -261,7 +227,6 @@ export function useIntroTimeline(onComplete?: () => void) {
   return {
     replay,
     replayToken,
-    typedLength,
     phaseLabel,
     bowlRotate,
     bowlTranslateY,
@@ -272,8 +237,6 @@ export function useIntroTimeline(onComplete?: () => void) {
     logoLaunch,
     logoShrink,
     logoOpacity,
-    textSoften,
-    textBlur,
     wordmarkOpacity,
     chromeOpacity,
     chromeTranslateY,

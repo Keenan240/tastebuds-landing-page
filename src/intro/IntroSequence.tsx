@@ -1,9 +1,9 @@
-import React, { useMemo } from 'react';
+import React, { useCallback, useMemo, useState } from 'react';
 import {
+  LayoutChangeEvent,
   Pressable,
   StyleSheet,
   Text,
-  useWindowDimensions,
   View,
 } from 'react-native';
 import { useSafeAreaInsets } from 'react-native-safe-area-context';
@@ -11,11 +11,10 @@ import { StatusBar } from 'expo-status-bar';
 
 import { Bowl } from './components/Bowl';
 import { FoodItem } from './components/FoodItem';
-import { HungryText } from './components/HungryText';
 import { LandingChrome } from './components/LandingChrome';
 import { SmileLogo } from './components/SmileLogo';
 import { Wordmark } from './components/Wordmark';
-import { COLORS, FOOD_IDS, LAYOUT } from './phases';
+import { COLORS, FOOD_IDS, IPHONE, LAYOUT } from './phases';
 import { useIntroTimeline } from './useIntroTimeline';
 
 type Props = {
@@ -24,32 +23,47 @@ type Props = {
 };
 
 export function IntroSequence({ fontFamily, onComplete }: Props) {
-  const { height } = useWindowDimensions();
   const insets = useSafeAreaInsets();
   const timeline = useIntroTimeline(onComplete);
+  // Prefer measured phone-screen height (not desktop window) for drop math
+  const [viewH, setViewH] = useState(IPHONE.height);
+
+  const onRootLayout = useCallback((e: LayoutChangeEvent) => {
+    const h = e.nativeEvent.layout.height;
+    if (h > 0) setViewH(h);
+  }, []);
 
   const bowlBottom = useMemo(
-    () => Math.max(120, height * LAYOUT.bowlBottomRatio),
-    [height],
+    () => Math.max(120, viewH * LAYOUT.bowlBottomRatio),
+    [viewH],
   );
 
-  // How far the smile must travel from bowl rim to near the top of the screen
+  /**
+   * Food anchor sits near the bowl rim. startY must clear the top of THIS
+   * view (+ margin + cascade) so items begin fully off-screen above.
+   */
+  const foodStartYs = useMemo(() => {
+    const foodBottomFromViewBottom =
+      bowlBottom + (LAYOUT.bowlHeight - LAYOUT.foodSize * 0.55);
+    const upToTop = viewH - foodBottomFromViewBottom;
+    const firstStartY = -(upToTop + LAYOUT.foodSize + 64);
+    return FOOD_IDS.map(
+      (_, index) => firstStartY - index * LAYOUT.foodCascadeGap,
+    );
+  }, [bowlBottom, viewH]);
+
   const launchTravel = useMemo(() => {
     const rimFromBottom = bowlBottom + LAYOUT.bowlHeight;
-    const targetFromBottom = height - (insets.top + LAYOUT.logoTopOffset + 40);
+    const targetFromBottom = viewH - (insets.top + LAYOUT.logoTopOffset + 40);
     return Math.max(280, targetFromBottom - rimFromBottom);
-  }, [bowlBottom, height, insets.top]);
+  }, [bowlBottom, viewH, insets.top]);
 
   return (
-    <View style={[styles.root, { paddingTop: insets.top }]}>
+    <View
+      style={[styles.root, { paddingTop: insets.top }]}
+      onLayout={onRootLayout}
+    >
       <StatusBar style="dark" />
-
-      <HungryText
-        typedLength={timeline.typedLength}
-        soften={timeline.textSoften}
-        blur={timeline.textBlur}
-        fontFamily={fontFamily}
-      />
 
       <Wordmark opacity={timeline.wordmarkOpacity} fontFamily={fontFamily} />
 
@@ -63,10 +77,10 @@ export function IntroSequence({ fontFamily, onComplete }: Props) {
               collapse={timeline.foodCollapse}
               opacity={timeline.foods[index].opacity}
               bowlTranslateY={timeline.bowlTranslateY}
+              startY={foodStartYs[index]}
             />
           ))}
 
-          {/* Behind the bowl so only the top peeks over the rim */}
           <SmileLogo
             opacity={timeline.logoOpacity}
             peek={timeline.logoPeek}

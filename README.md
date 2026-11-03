@@ -11,15 +11,14 @@ npm run web -- --port 43123
 
 Open [http://127.0.0.1:43123](http://127.0.0.1:43123). On a **wide desktop window** the app sits in an iPhone frame so you can inspect the mobile POV. Narrow the window or use Chrome DevTools → iPhone device mode for a full-bleed phone viewport.
 
-## What plays
+## What plays (bowl intro)
 
-1. Food drops into a tilted brown bowl (food stacks **behind** the bowl)  
+1. Food starts **above** the top of the viewport and falls into a tilted bowl  
 2. Bowl straightens  
-3. Food collapses; orange smile peeks from the rim  
-4. Smile launches up; bowl exits down  
-5. `"you hungryyyyyyyyyyyyyyyyyyyy?"` types in **Urbanist Semibold 61**  
-6. Text softens to beige; smile shrinks toward the top  
-7. Composed **Tastebuds** wordmark appears; text blurs; search chrome fades in  
+3. Food collapses — bowl reads empty — brief pause  
+4. Orange smile peeks from the rim — brief pause  
+5. Smile launches up; bowl exits down  
+6. Tastebuds wordmark + search chrome hand off (Part 2 hooks here; “you hungry” is Part 2)
 
 Tap **Replay** (top right) to re-run.
 
