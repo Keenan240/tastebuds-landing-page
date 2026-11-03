@@ -26,7 +26,7 @@ export function IntroSequence({ fontFamily, onComplete }: Props) {
   const insets = useSafeAreaInsets();
   const timeline = useIntroTimeline(onComplete);
   // Prefer measured phone-screen height (not desktop window) for drop math
-  const [viewH, setViewH] = useState(IPHONE.height);
+  const [viewH, setViewH] = useState<number>(IPHONE.height);
 
   const onRootLayout = useCallback((e: LayoutChangeEvent) => {
     const h = e.nativeEvent.layout.height;
