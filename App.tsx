@@ -29,10 +29,7 @@ export default function App() {
     <GestureHandlerRootView style={styles.root}>
       <SafeAreaProvider>
         <PhoneFrame>
-          <IntroSequence
-            fontFamily="Urbanist_600SemiBold"
-            onComplete={onComplete}
-          />
+          <IntroSequence onComplete={onComplete} />
         </PhoneFrame>
       </SafeAreaProvider>
     </GestureHandlerRootView>

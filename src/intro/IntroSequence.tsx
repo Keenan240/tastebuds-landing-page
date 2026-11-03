@@ -11,9 +11,7 @@ import { StatusBar } from 'expo-status-bar';
 
 import { Bowl } from './components/Bowl';
 import { FoodItem } from './components/FoodItem';
-import { LandingChrome } from './components/LandingChrome';
 import { SmileLogo } from './components/SmileLogo';
-import { Wordmark } from './components/Wordmark';
 import { COLORS, FOOD_IDS, IPHONE, LAYOUT } from './phases';
 import { useIntroTimeline } from './useIntroTimeline';
 
@@ -22,10 +20,9 @@ type Props = {
   onComplete?: () => void;
 };
 
-export function IntroSequence({ fontFamily, onComplete }: Props) {
+export function IntroSequence({ onComplete }: Props) {
   const insets = useSafeAreaInsets();
   const timeline = useIntroTimeline(onComplete);
-  // Prefer measured phone-screen height (not desktop window) for drop math
   const [viewH, setViewH] = useState<number>(IPHONE.height);
 
   const onRootLayout = useCallback((e: LayoutChangeEvent) => {
@@ -38,10 +35,6 @@ export function IntroSequence({ fontFamily, onComplete }: Props) {
     [viewH],
   );
 
-  /**
-   * Food anchor sits near the bowl rim. startY must clear the top of THIS
-   * view (+ margin + cascade) so items begin fully off-screen above.
-   */
   const foodStartYs = useMemo(() => {
     const foodBottomFromViewBottom =
       bowlBottom + (LAYOUT.bowlHeight - LAYOUT.foodSize * 0.55);
@@ -65,8 +58,6 @@ export function IntroSequence({ fontFamily, onComplete }: Props) {
     >
       <StatusBar style="dark" />
 
-      <Wordmark opacity={timeline.wordmarkOpacity} fontFamily={fontFamily} />
-
       <View style={[styles.bowlSlot, { bottom: bowlBottom }]}>
         <View style={styles.stage}>
           {FOOD_IDS.map((id, index) => (
@@ -85,7 +76,6 @@ export function IntroSequence({ fontFamily, onComplete }: Props) {
             opacity={timeline.logoOpacity}
             peek={timeline.logoPeek}
             launch={timeline.logoLaunch}
-            shrink={timeline.logoShrink}
             launchTravel={launchTravel}
           />
 
@@ -96,11 +86,6 @@ export function IntroSequence({ fontFamily, onComplete }: Props) {
           />
         </View>
       </View>
-
-      <LandingChrome
-        opacity={timeline.chromeOpacity}
-        translateY={timeline.chromeTranslateY}
-      />
 
       <Pressable
         onPress={timeline.replay}

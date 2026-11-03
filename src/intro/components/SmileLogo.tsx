@@ -14,41 +14,37 @@ type Props = {
   opacity: SharedValue<number>;
   peek: SharedValue<number>;
   launch: SharedValue<number>;
-  shrink: SharedValue<number>;
   launchTravel: number;
 };
 
 /**
- * Starts fully tucked behind the bowl rim, then rises a short distance to peek.
- * No fade-in — motion is pure translateY. Opacity only used at handoff.
+ * Hidden (opacity 0) until the empty-bowl beat. Then snaps on behind the rim
+ * and rises a little via translateY before launching to the top.
  */
 export function SmileLogo({
   opacity,
   peek,
   launch,
-  shrink,
   launchTravel,
 }: Props) {
   const style = useAnimatedStyle(() => {
     const base = LAYOUT.logoPeekSize;
     const top = LAYOUT.logoTopSize;
-    const final = LAYOUT.logoFinalSize;
-
-    const targetWidth = interpolate(
-      shrink.value,
-      [0, 1],
-      [interpolate(launch.value, [0, 1], [base, top]), final],
-      Extrapolation.CLAMP,
-    );
-
-    const scale = targetWidth / base;
     const height = base * SMILE_ASPECT;
 
-    // 0 = buried under the rim; 1 = just a small crest showing above
+    const size = interpolate(
+      launch.value,
+      [0, 1],
+      [base, top],
+      Extrapolation.CLAMP,
+    );
+    const scale = size / base;
+
+    // Buried deep under the rim → small crest above
     const peekOffset = interpolate(
       peek.value,
       [0, 1],
-      [height * 0.72, -height * 0.22],
+      [height * 0.85, -height * 0.2],
       Extrapolation.CLAMP,
     );
 
@@ -59,16 +55,11 @@ export function SmileLogo({
       Extrapolation.CLAMP,
     );
 
-    const shrinkNudge = interpolate(shrink.value, [0, 1], [0, -8]);
-
     return {
       opacity: opacity.value,
       left: (LAYOUT.bowlWidth - base) / 2,
       bottom: LAYOUT.bowlHeight + peekOffset,
-      transform: [
-        { translateY: launchOffset + shrinkNudge },
-        { scale },
-      ],
+      transform: [{ translateY: launchOffset }, { scale }],
     };
   });
 

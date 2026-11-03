@@ -4,13 +4,12 @@ import {
   Easing,
   useSharedValue,
   withDelay,
-  withSequence,
   withSpring,
   withTiming,
 } from 'react-native-reanimated';
 
 import {
-  BOWL_IMPACTS,
+  BOWL_SETTLE_AFTER_HIT,
   BOWL_START_TILT,
   DURATIONS,
   FOOD_COUNT,
@@ -21,8 +20,8 @@ import {
 export type IntroTimeline = ReturnType<typeof useIntroTimeline>;
 
 /**
- * Bowl intro:
- * drop + impact tilts → collapse (empty) → pause → logo rises to peek → pause → launch → handoff
+ * drop (bowl settles per hit) → collapse → empty pause →
+ * smile appears behind rim → rises to peek → shoots up → done
  */
 export function useIntroTimeline(onComplete?: () => void) {
   const [replayToken, setReplayToken] = useState(0);
@@ -52,13 +51,8 @@ export function useIntroTimeline(onComplete?: () => void) {
 
   const logoPeek = useSharedValue(0);
   const logoLaunch = useSharedValue(0);
-  const logoShrink = useSharedValue(0);
-  /** Logo stays fully opaque while rising; only fades at wordmark handoff. */
-  const logoOpacity = useSharedValue(1);
-
-  const wordmarkOpacity = useSharedValue(0);
-  const chromeOpacity = useSharedValue(0);
-  const chromeTranslateY = useSharedValue(24);
+  /** 0 until empty bowl beat — then snapped on before the rise. */
+  const logoOpacity = useSharedValue(0);
 
   const markPhase = useCallback((label: string) => {
     setPhaseLabel(label);
@@ -80,11 +74,7 @@ export function useIntroTimeline(onComplete?: () => void) {
     });
     cancelAnimation(logoPeek);
     cancelAnimation(logoLaunch);
-    cancelAnimation(logoShrink);
     cancelAnimation(logoOpacity);
-    cancelAnimation(wordmarkOpacity);
-    cancelAnimation(chromeOpacity);
-    cancelAnimation(chromeTranslateY);
 
     bowlRotate.value = BOWL_START_TILT;
     bowlTranslateY.value = 0;
@@ -96,25 +86,17 @@ export function useIntroTimeline(onComplete?: () => void) {
     });
     logoPeek.value = 0;
     logoLaunch.value = 0;
-    logoShrink.value = 0;
-    logoOpacity.value = 1;
-    wordmarkOpacity.value = 0;
-    chromeOpacity.value = 0;
-    chromeTranslateY.value = 24;
+    logoOpacity.value = 0;
     setPhaseLabel('idle');
   }, [
     bowlOpacity,
     bowlRotate,
     bowlTranslateY,
-    chromeOpacity,
-    chromeTranslateY,
     foodCollapse,
     foods,
     logoLaunch,
     logoOpacity,
     logoPeek,
-    logoShrink,
-    wordmarkOpacity,
   ]);
 
   const replay = useCallback(() => {
@@ -143,26 +125,24 @@ export function useIntroTimeline(onComplete?: () => void) {
       const releaseAt = index * DURATIONS.foodStagger;
       const impactAt =
         releaseAt + Math.round(DURATIONS.foodDrop * DURATIONS.impactAt);
-      const impact = BOWL_IMPACTS[index];
 
       later(releaseAt, () => {
         foods[index].drop.value = withSpring(1, SPRINGS.drop);
       });
 
-      // Bowl reacts as each piece hits
+      // One settle spring per hit — no kick/settle sequence (avoids shake)
       later(impactAt, () => {
-        markPhase(index === FOOD_COUNT - 1 ? 'settle' : 'impact');
-        bowlRotate.value = withSequence(
-          withSpring(impact.kick, SPRINGS.bowlKick),
-          withSpring(impact.settle, SPRINGS.bowlSettle),
+        markPhase(index === FOOD_COUNT - 1 ? 'level' : 'catch');
+        bowlRotate.value = withSpring(
+          BOWL_SETTLE_AFTER_HIT[index],
+          SPRINGS.bowlSettle,
         );
       });
     });
 
-    const afterSettle =
-      dropEnd + 120 + DURATIONS.holdAfterStraighten;
+    const afterFull = dropEnd + DURATIONS.holdAfterFull;
 
-    later(afterSettle, () => {
+    later(afterFull, () => {
       markPhase('collapse');
       foodCollapse.value = withSpring(1, SPRINGS.peek);
       foods.forEach((f, i) => {
@@ -173,12 +153,12 @@ export function useIntroTimeline(onComplete?: () => void) {
       });
     });
 
-    const afterEmpty =
-      afterSettle + DURATIONS.collapse + DURATIONS.holdEmpty;
+    const afterEmpty = afterFull + DURATIONS.collapse + DURATIONS.holdEmpty;
 
-    // Rise into peek by position only — already opaque, hidden behind bowl
     later(afterEmpty, () => {
       markPhase('peek');
+      // Snap visible behind the bowl, then rise by Y only
+      logoOpacity.value = 1;
       logoPeek.value = withSpring(1, SPRINGS.peek);
     });
 
@@ -191,39 +171,15 @@ export function useIntroTimeline(onComplete?: () => void) {
         ...SPRINGS.launch,
         stiffness: 160,
       });
-      bowlRotate.value = withTiming(-22, {
+      bowlRotate.value = withTiming(-18, {
         duration: DURATIONS.launch,
         easing: Easing.out(Easing.cubic),
       });
       bowlOpacity.value = withDelay(
         Math.round(DURATIONS.launch * 0.4),
-        withTiming(0, { duration: 240 }),
+        withTiming(0, { duration: 220 }),
       );
-    });
-
-    const afterLaunch =
-      afterPeek + DURATIONS.launch + DURATIONS.holdAfterLaunch;
-
-    later(afterLaunch, () => {
-      markPhase('handoff');
-      logoOpacity.value = withTiming(0, {
-        duration: DURATIONS.handoff * 0.45,
-        easing: Easing.in(Easing.cubic),
-      });
-      logoShrink.value = withSpring(1, SPRINGS.soft);
-      wordmarkOpacity.value = withTiming(1, {
-        duration: DURATIONS.handoff * 0.85,
-        easing: Easing.out(Easing.cubic),
-      });
-      chromeOpacity.value = withDelay(
-        80,
-        withTiming(1, {
-          duration: DURATIONS.handoff,
-          easing: Easing.out(Easing.cubic),
-        }),
-      );
-      chromeTranslateY.value = withDelay(80, withSpring(0, SPRINGS.soft));
-      later(DURATIONS.handoff + 80, () => finish());
+      later(DURATIONS.launch + 80, () => finish());
     });
 
     return () => {
@@ -244,10 +200,6 @@ export function useIntroTimeline(onComplete?: () => void) {
     foodCollapse,
     logoPeek,
     logoLaunch,
-    logoShrink,
     logoOpacity,
-    wordmarkOpacity,
-    chromeOpacity,
-    chromeTranslateY,
   };
 }

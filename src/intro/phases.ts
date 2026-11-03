@@ -12,7 +12,7 @@ export const COLORS = {
   desktopBackdrop: '#E8E4D9',
 } as const;
 
-/** Kept for Part 2 hero — not used in the bowl intro anymore. */
+/** Kept for Part 2 hero — not used in the bowl intro. */
 export const HUNGRY_LINES = [
   'you hungry',
   'yyyyyyyyyyyyyyyyyyyy',
@@ -20,48 +20,38 @@ export const HUNGRY_LINES = [
 ] as const;
 export const HUNGRY_TEXT = HUNGRY_LINES.join('\n');
 
-/** Bowl rests slightly tilted before the first hit. */
-export const BOWL_START_TILT = 10;
+/** Starting tilt — settles step-by-step as each piece lands. */
+export const BOWL_START_TILT = 16;
 
 export const FOOD_COUNT = 4;
 
-/** Drop order: pepper first (lowest), then leek, tomato, radish (highest / last). */
 export const FOOD_IDS = ['pepper', 'leek', 'tomato', 'radish'] as const;
 export type FoodId = (typeof FOOD_IDS)[number];
 
 /**
- * Per-hit bowl kick then settle (degrees). Last settle is level.
- * Timed to land roughly when each springy drop bottoms out.
+ * Target bowl angle after each landing (one spring per hit — no kick/settle fight).
+ * Timed when the drop visually bottoms out.
  */
-export const BOWL_IMPACTS: { kick: number; settle: number }[] = [
-  { kick: 20, settle: 12 },
-  { kick: -10, settle: 6 },
-  { kick: 14, settle: 3 },
-  { kick: -6, settle: 0 },
-];
+export const BOWL_SETTLE_AFTER_HIT = [11, 6, 2, 0] as const;
 
 export const DURATIONS = {
-  foodDrop: 900,
-  foodStagger: 140,
-  /** Fraction of foodDrop when the piece "hits" the bowl */
-  impactAt: 0.58,
-  holdAfterStraighten: 280,
+  foodDrop: 920,
+  foodStagger: 150,
+  /** When the piece hits relative to its drop spring start */
+  impactAt: 0.72,
+  holdAfterFull: 320,
   collapse: 480,
-  holdEmpty: 420,
-  peek: 480,
-  holdAfterPeek: 380,
-  launch: 560,
-  holdAfterLaunch: 200,
-  handoff: 520,
+  holdEmpty: 400,
+  peek: 420,
+  holdAfterPeek: 360,
+  launch: 580,
 } as const;
 
 export const SPRINGS = {
-  drop: { damping: 14, stiffness: 120, mass: 1.05 },
-  bowlKick: { damping: 11, stiffness: 260, mass: 0.7 },
-  bowlSettle: { damping: 14, stiffness: 160, mass: 0.9 },
-  peek: { damping: 16, stiffness: 140, mass: 0.9 },
+  drop: { damping: 14, stiffness: 115, mass: 1.05 },
+  bowlSettle: { damping: 18, stiffness: 140, mass: 1 },
+  peek: { damping: 18, stiffness: 130, mass: 0.95 },
   launch: { damping: 13, stiffness: 200, mass: 0.75 },
-  soft: { damping: 20, stiffness: 140, mass: 1 },
 } as const;
 
 export const IPHONE = {
@@ -75,23 +65,16 @@ export const LAYOUT = {
   bowlHeight: 124,
   bowlBottomRatio: 0.32,
   foodSize: 120,
-  /** Vertical gap between cascading items while off-screen / falling */
   foodCascadeGap: 130,
   logoPeekSize: 52,
-  logoTopSize: 44,
-  logoFinalSize: 32,
+  logoTopSize: 48,
   logoTopOffset: 52,
-  logoFinalOffset: 44,
   hungryFontSize: 61,
   hungryLineHeight: 66,
 } as const;
 
 export const SMILE_ASPECT = 71 / 53;
 
-/**
- * Landed nest positions — overlapping across the rim so the bowl looks full.
- * y negative = above rim; lower half sits behind the bowl.
- */
 export const FOOD_PEEK: Record<
   FoodId,
   { x: number; y: number; rotate: number; scale: number }
@@ -102,11 +85,7 @@ export const FOOD_PEEK: Record<
   pepper: { x: 68, y: -10, rotate: 18, scale: 1.05 },
 };
 
-/** Horizontal / rotation only — vertical start is computed from viewport height. */
-export const FOOD_START: Record<
-  FoodId,
-  { x: number; rotate: number }
-> = {
+export const FOOD_START: Record<FoodId, { x: number; rotate: number }> = {
   pepper: { x: 6, rotate: -8 },
   leek: { x: -4, rotate: 24 },
   tomato: { x: 2, rotate: -6 },
