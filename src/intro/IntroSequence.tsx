@@ -121,7 +121,7 @@ const styles = StyleSheet.create({
   },
   stage: {
     width: LAYOUT.bowlWidth,
-    height: LAYOUT.bowlHeight + 80,
+    height: LAYOUT.bowlHeight + 140,
     justifyContent: 'flex-end',
     overflow: 'visible',
   },

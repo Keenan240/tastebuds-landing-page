@@ -29,7 +29,7 @@ type Props = {
   bowlTranslateY: SharedValue<number>;
 };
 
-/** Always stacked behind the bowl so items drop into / sit under the rim. */
+/** Stacked behind the bowl — drops from above, nests tightly in the rim. */
 export function FoodItem({
   id,
   drop,
@@ -61,14 +61,14 @@ export function FoodItem({
     );
     const landedScale = interpolate(
       drop.value,
-      [0, 0.9, 1],
-      [1, 1.04, peek.scale],
+      [0, 0.85, 1],
+      [1, 1.06, peek.scale],
       Extrapolation.CLAMP,
     );
 
     const x = interpolate(collapse.value, [0, 1], [landedX, 0]);
-    const y = interpolate(collapse.value, [0, 1], [landedY, 22]);
-    const scale = interpolate(collapse.value, [0, 1], [landedScale, 0.2]);
+    const y = interpolate(collapse.value, [0, 1], [landedY, 28]);
+    const scale = interpolate(collapse.value, [0, 1], [landedScale, 0.18]);
     const rot = interpolate(collapse.value, [0, 1], [landedRot, 0]);
 
     return {
@@ -95,8 +95,8 @@ const styles = StyleSheet.create({
     width: LAYOUT.foodSize,
     height: LAYOUT.foodSize,
     left: (LAYOUT.bowlWidth - LAYOUT.foodSize) / 2,
-    // Anchor at rim; food draws behind bowl so lower half is covered
-    bottom: LAYOUT.bowlHeight - LAYOUT.foodSize * 0.42,
+    // Deep into the bowl so the rim covers the lower half
+    bottom: LAYOUT.bowlHeight - LAYOUT.foodSize * 0.55,
     zIndex: 4,
   },
   image: {

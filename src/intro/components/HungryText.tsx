@@ -1,4 +1,4 @@
-import React from 'react';
+import React, { useMemo } from 'react';
 import { Platform, StyleSheet, Text, View } from 'react-native';
 import Animated, {
   interpolateColor,
@@ -7,7 +7,7 @@ import Animated, {
 import type { SharedValue } from 'react-native-reanimated';
 import { BlurView } from 'expo-blur';
 
-import { COLORS, HUNGRY_TEXT, LAYOUT } from '../phases';
+import { COLORS, HUNGRY_LINES, HUNGRY_TEXT, LAYOUT } from '../phases';
 
 type Props = {
   typedLength: number;
@@ -16,13 +16,18 @@ type Props = {
   fontFamily?: string;
 };
 
+/** Build visible 3-line copy from a flat typed length (newlines counted). */
+function visibleFromTyped(typedLength: number): string {
+  return HUNGRY_TEXT.slice(0, typedLength);
+}
+
 export function HungryText({
   typedLength,
   soften,
   blur,
   fontFamily,
 }: Props) {
-  const visible = HUNGRY_TEXT.slice(0, typedLength);
+  const visible = useMemo(() => visibleFromTyped(typedLength), [typedLength]);
 
   const textStyle = useAnimatedStyle(() => ({
     color: interpolateColor(
@@ -65,7 +70,7 @@ export function HungryText({
             fontFamily ? { fontFamily } : null,
           ]}
         >
-          {HUNGRY_TEXT}
+          {HUNGRY_LINES.join('\n')}
         </Text>
       </Animated.View>
     </View>
@@ -75,16 +80,21 @@ export function HungryText({
 const styles = StyleSheet.create({
   wrap: {
     position: 'absolute',
-    left: 24,
-    right: 24,
-    top: '26%',
+    // Bleed past both edges of the phone viewport
+    left: -56,
+    right: -56,
+    top: '24%',
     zIndex: 5,
+    overflow: 'visible',
   },
   text: {
     fontSize: LAYOUT.hungryFontSize,
     lineHeight: LAYOUT.hungryLineHeight,
     fontWeight: '600',
-    letterSpacing: -1.2,
+    letterSpacing: -1.4,
+    // Keep forced 3-line breaks from \n; don't reflow
+    // @ts-expect-error web white-space for explicit newlines
+    whiteSpace: 'pre-line',
   },
   blurOverlay: {
     ...StyleSheet.absoluteFill,

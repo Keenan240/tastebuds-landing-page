@@ -12,7 +12,17 @@ export const COLORS = {
   desktopBackdrop: '#E8E4D9',
 } as const;
 
-export const HUNGRY_TEXT = 'you hungryyyyyyyyyyyyyyyyyyyy?';
+/**
+ * Exactly 3 lines: "you hungry" on line 1, then y's wrapping to lines 2–3.
+ * Wide enough at 61px Urbanist to bleed past the phone edges.
+ */
+export const HUNGRY_LINES = [
+  'you hungry',
+  'yyyyyyyyyyyyyyyyyyyy',
+  'yyyyyyyyyyyyyyyyy?',
+] as const;
+
+export const HUNGRY_TEXT = HUNGRY_LINES.join('\n');
 
 /** Bowl starts tilted clockwise (degrees). */
 export const BOWL_START_TILT = 16;
@@ -24,15 +34,15 @@ export const FOOD_IDS = ['pepper', 'leek', 'tomato', 'radish'] as const;
 export type FoodId = (typeof FOOD_IDS)[number];
 
 export const DURATIONS = {
-  foodDrop: 720,
-  foodStagger: 110,
+  foodDrop: 780,
+  foodStagger: 130,
   bowlStraighten: 380,
   holdAfterStraighten: 280,
   collapse: 560,
   holdAfterPeek: 360,
   launch: 560,
   holdAfterLaunch: 220,
-  typeChar: 42,
+  typeChar: 38,
   holdAfterType: 280,
   soften: 480,
   holdAfterSoften: 240,
@@ -40,7 +50,7 @@ export const DURATIONS = {
 } as const;
 
 export const SPRINGS = {
-  drop: { damping: 14, stiffness: 160, mass: 0.9 },
+  drop: { damping: 13, stiffness: 150, mass: 0.95 },
   bowl: { damping: 16, stiffness: 180, mass: 0.85 },
   peek: { damping: 15, stiffness: 170, mass: 0.8 },
   launch: { damping: 13, stiffness: 200, mass: 0.75 },
@@ -59,11 +69,11 @@ export const IPHONE = {
  * Smile asset native ratio is 53×71 — always scale with that aspect.
  */
 export const LAYOUT = {
-  bowlWidth: 200,
-  bowlHeight: 100,
-  bowlBottomRatio: 0.34,
-  foodSize: 58,
-  /** Smile mark width; height = width * SMILE_ASPECT */
+  bowlWidth: 248,
+  bowlHeight: 124,
+  bowlBottomRatio: 0.32,
+  /** Large food — packed into the bowl with overlap, no gaps */
+  foodSize: 120,
   logoPeekSize: 52,
   logoTopSize: 44,
   logoFinalSize: 32,
@@ -77,25 +87,26 @@ export const LAYOUT = {
 export const SMILE_ASPECT = 71 / 53;
 
 /**
- * Landed peek offsets relative to rim anchor.
- * y negative = above rim; bottoms still sit behind the bowl.
+ * Landed nest positions — overlapping across the rim so the bowl looks full.
+ * y negative = above rim; lower half sits behind the bowl.
  */
 export const FOOD_PEEK: Record<
   FoodId,
   { x: number; y: number; rotate: number; scale: number }
 > = {
-  pepper: { x: 36, y: -18, rotate: 14, scale: 0.92 },
-  leek: { x: -6, y: -34, rotate: -32, scale: 0.95 },
-  tomato: { x: -34, y: -14, rotate: -10, scale: 0.88 },
-  radish: { x: 14, y: -28, rotate: 18, scale: 0.9 },
+  tomato: { x: -62, y: -6, rotate: -12, scale: 1 },
+  leek: { x: -10, y: -48, rotate: -38, scale: 1.08 },
+  radish: { x: 32, y: -34, rotate: 22, scale: 1.02 },
+  pepper: { x: 68, y: -10, rotate: 18, scale: 1.05 },
 };
 
+/** Cascade from above the top of the screen into the bowl (column drop). */
 export const FOOD_START: Record<
   FoodId,
   { x: number; y: number; rotate: number }
 > = {
-  pepper: { x: 4, y: -380, rotate: -10 },
-  leek: { x: -4, y: -480, rotate: 22 },
-  tomato: { x: 2, y: -580, rotate: -6 },
-  radish: { x: -6, y: -680, rotate: 12 },
+  pepper: { x: 6, y: -420, rotate: -8 },
+  leek: { x: -4, y: -560, rotate: 24 },
+  tomato: { x: 2, y: -700, rotate: -6 },
+  radish: { x: -8, y: -840, rotate: 14 },
 };
