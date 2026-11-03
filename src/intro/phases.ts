@@ -69,6 +69,7 @@ export const LAYOUT = {
   logoPeekSize: 52,
   logoTopSize: 48,
   logoTopOffset: 52,
+  logoFinalOffset: 44,
   hungryFontSize: 61,
   hungryLineHeight: 66,
 } as const;
