@@ -20,8 +20,8 @@ export const HUNGRY_LINES = [
 ] as const;
 export const HUNGRY_TEXT = HUNGRY_LINES.join('\n');
 
-/** Bowl starts tilted clockwise (degrees). */
-export const BOWL_START_TILT = 16;
+/** Bowl rests slightly tilted before the first hit. */
+export const BOWL_START_TILT = 10;
 
 export const FOOD_COUNT = 4;
 
@@ -29,17 +29,26 @@ export const FOOD_COUNT = 4;
 export const FOOD_IDS = ['pepper', 'leek', 'tomato', 'radish'] as const;
 export type FoodId = (typeof FOOD_IDS)[number];
 
+/**
+ * Per-hit bowl kick then settle (degrees). Last settle is level.
+ * Timed to land roughly when each springy drop bottoms out.
+ */
+export const BOWL_IMPACTS: { kick: number; settle: number }[] = [
+  { kick: 20, settle: 12 },
+  { kick: -10, settle: 6 },
+  { kick: 14, settle: 3 },
+  { kick: -6, settle: 0 },
+];
+
 export const DURATIONS = {
   foodDrop: 900,
   foodStagger: 140,
-  bowlStraighten: 380,
-  holdAfterStraighten: 300,
-  /** Food sinks away — bowl reads empty */
+  /** Fraction of foodDrop when the piece "hits" the bowl */
+  impactAt: 0.58,
+  holdAfterStraighten: 280,
   collapse: 480,
-  /** Beat on empty bowl before logo appears */
   holdEmpty: 420,
-  /** Logo rises to peek */
-  peek: 520,
+  peek: 480,
   holdAfterPeek: 380,
   launch: 560,
   holdAfterLaunch: 200,
@@ -48,8 +57,9 @@ export const DURATIONS = {
 
 export const SPRINGS = {
   drop: { damping: 14, stiffness: 120, mass: 1.05 },
-  bowl: { damping: 16, stiffness: 180, mass: 0.85 },
-  peek: { damping: 15, stiffness: 170, mass: 0.8 },
+  bowlKick: { damping: 11, stiffness: 260, mass: 0.7 },
+  bowlSettle: { damping: 14, stiffness: 160, mass: 0.9 },
+  peek: { damping: 16, stiffness: 140, mass: 0.9 },
   launch: { damping: 13, stiffness: 200, mass: 0.75 },
   soft: { damping: 20, stiffness: 140, mass: 1 },
 } as const;

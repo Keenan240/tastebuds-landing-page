@@ -4,11 +4,13 @@ import {
   Easing,
   useSharedValue,
   withDelay,
+  withSequence,
   withSpring,
   withTiming,
 } from 'react-native-reanimated';
 
 import {
+  BOWL_IMPACTS,
   BOWL_START_TILT,
   DURATIONS,
   FOOD_COUNT,
@@ -19,9 +21,8 @@ import {
 export type IntroTimeline = ReturnType<typeof useIntroTimeline>;
 
 /**
- * Bowl intro only:
- * drop → straighten → collapse (empty) → pause → logo peek → pause → launch → handoff
- * (Hungry type lives in Part 2.)
+ * Bowl intro:
+ * drop + impact tilts → collapse (empty) → pause → logo rises to peek → pause → launch → handoff
  */
 export function useIntroTimeline(onComplete?: () => void) {
   const [replayToken, setReplayToken] = useState(0);
@@ -52,7 +53,8 @@ export function useIntroTimeline(onComplete?: () => void) {
   const logoPeek = useSharedValue(0);
   const logoLaunch = useSharedValue(0);
   const logoShrink = useSharedValue(0);
-  const logoOpacity = useSharedValue(0);
+  /** Logo stays fully opaque while rising; only fades at wordmark handoff. */
+  const logoOpacity = useSharedValue(1);
 
   const wordmarkOpacity = useSharedValue(0);
   const chromeOpacity = useSharedValue(0);
@@ -95,7 +97,7 @@ export function useIntroTimeline(onComplete?: () => void) {
     logoPeek.value = 0;
     logoLaunch.value = 0;
     logoShrink.value = 0;
-    logoOpacity.value = 0;
+    logoOpacity.value = 1;
     wordmarkOpacity.value = 0;
     chromeOpacity.value = 0;
     chromeTranslateY.value = 24;
@@ -138,21 +140,29 @@ export function useIntroTimeline(onComplete?: () => void) {
       DURATIONS.foodDrop + (FOOD_COUNT - 1) * DURATIONS.foodStagger;
 
     FOOD_IDS.forEach((_, index) => {
-      later(index * DURATIONS.foodStagger, () => {
+      const releaseAt = index * DURATIONS.foodStagger;
+      const impactAt =
+        releaseAt + Math.round(DURATIONS.foodDrop * DURATIONS.impactAt);
+      const impact = BOWL_IMPACTS[index];
+
+      later(releaseAt, () => {
         foods[index].drop.value = withSpring(1, SPRINGS.drop);
+      });
+
+      // Bowl reacts as each piece hits
+      later(impactAt, () => {
+        markPhase(index === FOOD_COUNT - 1 ? 'settle' : 'impact');
+        bowlRotate.value = withSequence(
+          withSpring(impact.kick, SPRINGS.bowlKick),
+          withSpring(impact.settle, SPRINGS.bowlSettle),
+        );
       });
     });
 
-    later(dropEnd + 80, () => {
-      markPhase('straighten');
-      bowlRotate.value = withSpring(0, SPRINGS.bowl);
-    });
+    const afterSettle =
+      dropEnd + 120 + DURATIONS.holdAfterStraighten;
 
-    const afterStraighten =
-      dropEnd + 80 + DURATIONS.bowlStraighten + DURATIONS.holdAfterStraighten;
-
-    // Collapse only — bowl goes empty. Logo stays hidden.
-    later(afterStraighten, () => {
+    later(afterSettle, () => {
       markPhase('collapse');
       foodCollapse.value = withSpring(1, SPRINGS.peek);
       foods.forEach((f, i) => {
@@ -164,12 +174,11 @@ export function useIntroTimeline(onComplete?: () => void) {
     });
 
     const afterEmpty =
-      afterStraighten + DURATIONS.collapse + DURATIONS.holdEmpty;
+      afterSettle + DURATIONS.collapse + DURATIONS.holdEmpty;
 
-    // Pause ended — logo peeks from empty bowl
+    // Rise into peek by position only — already opaque, hidden behind bowl
     later(afterEmpty, () => {
       markPhase('peek');
-      logoOpacity.value = withTiming(1, { duration: 220 });
       logoPeek.value = withSpring(1, SPRINGS.peek);
     });
 

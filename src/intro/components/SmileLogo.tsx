@@ -19,8 +19,8 @@ type Props = {
 };
 
 /**
- * Behind the bowl during peek (z-order), then launches up.
- * Size changes only via uniform scale — no independent width/height stretch.
+ * Starts fully tucked behind the bowl rim, then rises a short distance to peek.
+ * No fade-in — motion is pure translateY. Opacity only used at handoff.
  */
 export function SmileLogo({
   opacity,
@@ -41,14 +41,14 @@ export function SmileLogo({
       Extrapolation.CLAMP,
     );
 
-    // Uniform scale relative to peek base size (SmileMark always rendered at base)
     const scale = targetWidth / base;
     const height = base * SMILE_ASPECT;
 
+    // 0 = buried under the rim; 1 = just a small crest showing above
     const peekOffset = interpolate(
       peek.value,
       [0, 1],
-      [height * 0.45, -height * 0.55],
+      [height * 0.72, -height * 0.22],
       Extrapolation.CLAMP,
     );
 
