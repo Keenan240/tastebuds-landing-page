@@ -24,7 +24,7 @@ export function Wordmark({ opacity, fontFamily }: Props) {
   return (
     <Animated.View style={[styles.wrap, style]} pointerEvents="none">
       <View style={styles.row}>
-        <SmileMark width={28} height={34} />
+        <SmileMark size={26} />
         <Text style={[styles.name, fontFamily ? { fontFamily } : null]}>
           Tastebuds
         </Text>
@@ -49,7 +49,7 @@ const styles = StyleSheet.create({
   },
   name: {
     fontSize: 22,
-    fontWeight: '800',
+    fontWeight: '600',
     color: COLORS.brown,
     letterSpacing: -0.3,
   },

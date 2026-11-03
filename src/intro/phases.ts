@@ -9,6 +9,7 @@ export const COLORS = {
   chromeBorder: 'rgba(61, 31, 5, 0.08)',
   chromeIcon: '#8A8578',
   placeholder: '#B5B0A4',
+  desktopBackdrop: '#E8E4D9',
 } as const;
 
 export const HUNGRY_TEXT = 'you hungryyyyyyyyyyyyyyyyyyyy?';
@@ -18,12 +19,11 @@ export const BOWL_START_TILT = 16;
 
 export const FOOD_COUNT = 4;
 
-/** Drop order matches screens: pepper first, then leek, tomato, radish (top of cascade). */
+/** Drop order: pepper first (lowest), then leek, tomato, radish (top of cascade). */
 export const FOOD_IDS = ['pepper', 'leek', 'tomato', 'radish'] as const;
 export type FoodId = (typeof FOOD_IDS)[number];
 
 export const DURATIONS = {
-  /** Per-food drop spring settle window */
   foodDrop: 720,
   foodStagger: 110,
   bowlStraighten: 380,
@@ -47,42 +47,55 @@ export const SPRINGS = {
   soft: { damping: 20, stiffness: 140, mass: 1 },
 } as const;
 
-/** Layout anchors as fractions of screen height / fixed sizes. */
-export const LAYOUT = {
-  bowlWidth: 220,
-  bowlHeight: 110,
-  bowlBottomRatio: 0.38,
-  foodSize: 72,
-  logoPeekSize: 56,
-  logoTopSize: 48,
-  logoFinalSize: 36,
-  logoTopOffset: 56,
-  logoFinalOffset: 48,
-  hungryFontSize: 42,
-  hungryLineHeight: 48,
+/** iPhone 14/15 logical frame used for desktop preview shell. */
+export const IPHONE = {
+  width: 390,
+  height: 844,
+  radius: 44,
 } as const;
 
 /**
- * Final peek positions relative to bowl rim center (x, y above rim).
- * y is negative = above the rim.
+ * Layout for a ~390pt-wide phone. Figma hungry type: Urbanist Semibold 61.
+ * Smile asset native ratio is 53×71 — always scale with that aspect.
+ */
+export const LAYOUT = {
+  bowlWidth: 200,
+  bowlHeight: 100,
+  bowlBottomRatio: 0.34,
+  foodSize: 58,
+  /** Smile mark width; height = width * SMILE_ASPECT */
+  logoPeekSize: 52,
+  logoTopSize: 44,
+  logoFinalSize: 32,
+  logoTopOffset: 52,
+  logoFinalOffset: 44,
+  hungryFontSize: 61,
+  hungryLineHeight: 66,
+} as const;
+
+/** smile.png / mark aspect: height / width */
+export const SMILE_ASPECT = 71 / 53;
+
+/**
+ * Landed peek offsets relative to rim anchor.
+ * y negative = above rim; bottoms still sit behind the bowl.
  */
 export const FOOD_PEEK: Record<
   FoodId,
   { x: number; y: number; rotate: number; scale: number }
 > = {
-  pepper: { x: 48, y: -28, rotate: 18, scale: 0.55 },
-  leek: { x: -8, y: -46, rotate: -28, scale: 0.62 },
-  tomato: { x: -42, y: -22, rotate: -12, scale: 0.5 },
-  radish: { x: 18, y: -36, rotate: 22, scale: 0.48 },
+  pepper: { x: 36, y: -18, rotate: 14, scale: 0.92 },
+  leek: { x: -6, y: -34, rotate: -32, scale: 0.95 },
+  tomato: { x: -34, y: -14, rotate: -10, scale: 0.88 },
+  radish: { x: 14, y: -28, rotate: 18, scale: 0.9 },
 };
 
-/** Starting off-screen drop offsets (above bowl), staggered vertically. */
 export const FOOD_START: Record<
   FoodId,
   { x: number; y: number; rotate: number }
 > = {
-  pepper: { x: 8, y: -420, rotate: -12 },
-  leek: { x: -6, y: -520, rotate: 25 },
-  tomato: { x: 4, y: -620, rotate: -8 },
-  radish: { x: -10, y: -720, rotate: 15 },
+  pepper: { x: 4, y: -380, rotate: -10 },
+  leek: { x: -4, y: -480, rotate: 22 },
+  tomato: { x: 2, y: -580, rotate: -6 },
+  radish: { x: -6, y: -680, rotate: 12 },
 };

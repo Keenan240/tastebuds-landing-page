@@ -26,10 +26,10 @@ type Props = {
   drop: SharedValue<number>;
   collapse: SharedValue<number>;
   opacity: SharedValue<number>;
-  /** Shared with bowl exit so food rides the bowl off-screen if still visible. */
   bowlTranslateY: SharedValue<number>;
 };
 
+/** Always stacked behind the bowl so items drop into / sit under the rim. */
 export function FoodItem({
   id,
   drop,
@@ -61,14 +61,14 @@ export function FoodItem({
     );
     const landedScale = interpolate(
       drop.value,
-      [0, 0.85, 1],
-      [0.92, 1.08, peek.scale],
+      [0, 0.9, 1],
+      [1, 1.04, peek.scale],
       Extrapolation.CLAMP,
     );
 
     const x = interpolate(collapse.value, [0, 1], [landedX, 0]);
-    const y = interpolate(collapse.value, [0, 1], [landedY, 18]);
-    const scale = interpolate(collapse.value, [0, 1], [landedScale, 0.12]);
+    const y = interpolate(collapse.value, [0, 1], [landedY, 22]);
+    const scale = interpolate(collapse.value, [0, 1], [landedScale, 0.2]);
     const rot = interpolate(collapse.value, [0, 1], [landedRot, 0]);
 
     return {
@@ -95,9 +95,9 @@ const styles = StyleSheet.create({
     width: LAYOUT.foodSize,
     height: LAYOUT.foodSize,
     left: (LAYOUT.bowlWidth - LAYOUT.foodSize) / 2,
-    // Sit on the rim of the bowl shell (food layer stacks above bowl)
-    bottom: LAYOUT.bowlHeight - LAYOUT.foodSize / 2,
-    zIndex: 12,
+    // Anchor at rim; food draws behind bowl so lower half is covered
+    bottom: LAYOUT.bowlHeight - LAYOUT.foodSize * 0.42,
+    zIndex: 4,
   },
   image: {
     width: '100%',

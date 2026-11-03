@@ -11,7 +11,7 @@ type Props = {
   opacity: SharedValue<number>;
 };
 
-/** Dark brown semicircle bowl. */
+/** Dark brown semicircle — always paints above food / smile peek. */
 export function Bowl({ rotate, translateY, opacity }: Props) {
   const shellStyle = useAnimatedStyle(() => ({
     opacity: opacity.value,
@@ -34,6 +34,7 @@ const styles = StyleSheet.create({
     height: LAYOUT.bowlHeight,
     alignItems: 'center',
     justifyContent: 'flex-end',
+    zIndex: 20,
   },
   bowl: {
     width: LAYOUT.bowlWidth,

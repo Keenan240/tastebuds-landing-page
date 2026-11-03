@@ -2,14 +2,15 @@ import React, { useCallback } from 'react';
 import { ActivityIndicator, StyleSheet, View } from 'react-native';
 import { GestureHandlerRootView } from 'react-native-gesture-handler';
 import { SafeAreaProvider } from 'react-native-safe-area-context';
-import { Nunito_800ExtraBold, useFonts } from '@expo-google-fonts/nunito';
+import { Urbanist_600SemiBold, useFonts } from '@expo-google-fonts/urbanist';
 
+import { PhoneFrame } from './src/intro/components/PhoneFrame';
 import { IntroSequence } from './src/intro/IntroSequence';
 import { COLORS } from './src/intro/phases';
 
 export default function App() {
   const [fontsLoaded] = useFonts({
-    Nunito_800ExtraBold,
+    Urbanist_600SemiBold,
   });
 
   const onComplete = useCallback(() => {
@@ -27,10 +28,12 @@ export default function App() {
   return (
     <GestureHandlerRootView style={styles.root}>
       <SafeAreaProvider>
-        <IntroSequence
-          fontFamily="Nunito_800ExtraBold"
-          onComplete={onComplete}
-        />
+        <PhoneFrame>
+          <IntroSequence
+            fontFamily="Urbanist_600SemiBold"
+            onComplete={onComplete}
+          />
+        </PhoneFrame>
       </SafeAreaProvider>
     </GestureHandlerRootView>
   );
@@ -39,7 +42,7 @@ export default function App() {
 const styles = StyleSheet.create({
   root: {
     flex: 1,
-    backgroundColor: COLORS.background,
+    backgroundColor: COLORS.desktopBackdrop,
   },
   loading: {
     flex: 1,

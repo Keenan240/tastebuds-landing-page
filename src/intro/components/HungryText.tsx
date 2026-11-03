@@ -31,7 +31,6 @@ export function HungryText({
       [COLORS.brown, COLORS.beige],
     ),
     opacity: 1 - blur.value * 0.35,
-    transform: [{ scale: 1 + blur.value * 0.02 }],
   }));
 
   const blurOverlayStyle = useAnimatedStyle(() => ({
@@ -76,16 +75,16 @@ export function HungryText({
 const styles = StyleSheet.create({
   wrap: {
     position: 'absolute',
-    left: 28,
-    right: 28,
-    top: '28%',
+    left: 24,
+    right: 24,
+    top: '26%',
     zIndex: 5,
   },
   text: {
     fontSize: LAYOUT.hungryFontSize,
     lineHeight: LAYOUT.hungryLineHeight,
-    fontWeight: '800',
-    letterSpacing: -0.5,
+    fontWeight: '600',
+    letterSpacing: -1.2,
   },
   blurOverlay: {
     ...StyleSheet.absoluteFill,

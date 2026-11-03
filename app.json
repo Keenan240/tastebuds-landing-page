@@ -22,7 +22,15 @@
       "predictiveBackGestureEnabled": false
     },
     "web": {
-      "favicon": "./assets/favicon.png"
+      "favicon": "./assets/favicon.png",
+      "bundler": "metro",
+      "name": "Tastebuds",
+      "shortName": "Tastebuds",
+      "lang": "en",
+      "themeColor": "#FDFBF4",
+      "backgroundColor": "#FDFBF4",
+      "display": "standalone",
+      "orientation": "portrait"
     },
     "plugins": [
       "expo-font"
