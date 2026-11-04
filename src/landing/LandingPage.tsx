@@ -221,16 +221,18 @@ export function LandingPage() {
               />
             </View>
 
-            <FadeIn style={styles.footer}>
-              <Image
-                source={WORDMARK}
-                style={styles.footerMark}
-                resizeMode="contain"
-              />
-              <View style={styles.footerRule} />
-              <View style={styles.footerRow}>
-                <Text style={styles.footerMeta}>© Tastebuds</Text>
-                <Text style={styles.footerMeta}>Built by QTMA</Text>
+            <FadeIn style={styles.footerFade}>
+              <View style={styles.footer}>
+                <Image
+                  source={WORDMARK}
+                  style={styles.footerMark}
+                  resizeMode="contain"
+                />
+                <View style={styles.footerRule} />
+                <View style={styles.footerRow}>
+                  <Text style={styles.footerMeta}>© Tastebuds</Text>
+                  <Text style={styles.footerMeta}>Built by QTMA</Text>
+                </View>
               </View>
             </FadeIn>
           </View>
@@ -374,11 +376,16 @@ const styles = StyleSheet.create({
     width: '100%',
     height: 360,
   },
+  footerFade: {
+    alignSelf: 'stretch',
+    width: '100%',
+  },
   footer: {
-    paddingTop: 56,
-    paddingBottom: 28,
+    width: '100%',
+    paddingTop: 64,
+    paddingBottom: 32,
     alignItems: 'stretch',
-    gap: 28,
+    gap: 32,
   },
   footerMark: {
     width: 168,
@@ -386,11 +393,12 @@ const styles = StyleSheet.create({
     alignSelf: 'center',
   },
   footerRule: {
-    alignSelf: 'stretch',
+    width: '100%',
     height: 1.5,
     backgroundColor: LANDING.carrot,
   },
   footerRow: {
+    width: '100%',
     flexDirection: 'row',
     justifyContent: 'space-between',
     paddingHorizontal: 28,

@@ -3,6 +3,7 @@ import {
   LayoutChangeEvent,
   Platform,
   StyleProp,
+  StyleSheet,
   View,
   ViewProps,
   ViewStyle,
@@ -168,7 +169,14 @@ export function FadeIn({
       onLayout={onLayout}
       collapsable={false}
     >
-      <Animated.View style={anim}>{children}</Animated.View>
+      <Animated.View style={[styles.fill, anim]}>{children}</Animated.View>
     </View>
   );
 }
+
+const styles = StyleSheet.create({
+  fill: {
+    width: '100%',
+    alignSelf: 'stretch',
+  },
+});
