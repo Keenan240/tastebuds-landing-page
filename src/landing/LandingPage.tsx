@@ -242,7 +242,11 @@ export function LandingPage({ onReplayIntro }: Props) {
                   style={styles.footerMark}
                   resizeMode="contain"
                 />
-                <View style={styles.footerRule} />
+                <View
+                  style={styles.footerRule}
+                  accessibilityElementsHidden
+                  importantForAccessibility="no"
+                />
                 <View style={styles.footerRow}>
                   <Text style={styles.footerMeta}>© Tastebuds</Text>
                   <Text style={styles.footerMeta}>Built by QTMA</Text>
@@ -412,20 +416,20 @@ const styles = StyleSheet.create({
   },
   footerBrand: {
     width: 168,
-    alignItems: 'stretch',
-    gap: 14,
+    alignItems: 'center',
+    gap: 12,
   },
   footerMark: {
     width: 168,
     height: 32,
-    alignSelf: 'center',
   },
   footerRule: {
-    alignSelf: 'stretch',
-    borderTopWidth: 1,
-    borderTopColor: LANDING.carrot,
+    width: 168,
+    height: 1.5,
+    backgroundColor: LANDING.carrot,
   },
   footerRow: {
+    width: 168,
     flexDirection: 'row',
     justifyContent: 'space-between',
   },
