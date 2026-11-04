@@ -18,8 +18,8 @@ type Props = {
 };
 
 /**
- * Hidden (opacity 0) until the empty-bowl beat. Then snaps on behind the rim
- * and rises a little via translateY before launching to the top.
+ * Lives behind the bowl. Opacity gates visibility; peek is pure translateY
+ * from buried under the rim to a small crest above it, then launch flies up.
  */
 export function SmileLogo({
   opacity,
@@ -27,45 +27,37 @@ export function SmileLogo({
   launch,
   launchTravel,
 }: Props) {
-  const style = useAnimatedStyle(() => {
-    const base = LAYOUT.logoPeekSize;
-    const top = LAYOUT.logoTopSize;
-    const height = base * SMILE_ASPECT;
+  const base = LAYOUT.logoPeekSize;
+  const height = base * SMILE_ASPECT;
 
+  const style = useAnimatedStyle(() => {
     const size = interpolate(
       launch.value,
       [0, 1],
-      [base, top],
-      Extrapolation.CLAMP,
-    );
-    const scale = size / base;
-
-    // Buried deep under the rim → small crest above
-    const peekOffset = interpolate(
-      peek.value,
-      [0, 1],
-      [height * 0.85, -height * 0.2],
+      [base, LAYOUT.logoTopSize],
       Extrapolation.CLAMP,
     );
 
-    const launchOffset = interpolate(
-      launch.value,
-      [0, 1],
-      [0, -launchTravel],
-      Extrapolation.CLAMP,
-    );
+    // Rim-centered: positive Y = deeper into bowl, negative = above rim
+    const buriedY = height * 0.55;
+    const peekY = -height * 0.16;
+    const riseY = interpolate(peek.value, [0, 1], [buriedY, peekY]);
+    const flyY = interpolate(launch.value, [0, 1], [0, -launchTravel]);
 
     return {
       opacity: opacity.value,
       left: (LAYOUT.bowlWidth - base) / 2,
-      bottom: LAYOUT.bowlHeight + peekOffset,
-      transform: [{ translateY: launchOffset }, { scale }],
+      bottom: LAYOUT.bowlHeight - height * 0.5,
+      transform: [
+        { translateY: riseY + flyY },
+        { scale: size / base },
+      ],
     };
   });
 
   return (
     <Animated.View style={[styles.wrap, style]} pointerEvents="none">
-      <SmileMark size={LAYOUT.logoPeekSize} />
+      <SmileMark size={base} />
     </Animated.View>
   );
 }

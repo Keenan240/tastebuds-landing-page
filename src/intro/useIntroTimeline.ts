@@ -9,7 +9,6 @@ import {
 } from 'react-native-reanimated';
 
 import {
-  BOWL_SETTLE_AFTER_HIT,
   BOWL_START_TILT,
   DURATIONS,
   FOOD_COUNT,
@@ -20,8 +19,10 @@ import {
 export type IntroTimeline = ReturnType<typeof useIntroTimeline>;
 
 /**
- * drop (bowl settles per hit) → collapse → empty pause →
- * smile appears behind rim → rises to peek → shoots up → done
+ * 1) Orange drops into tilted bowl → bowl levels
+ * 2) Rest fall into straight bowl
+ * 3) Collapse → empty pause
+ * 4) Smile appears behind rim → rises to peek → shoots up → done
  */
 export function useIntroTimeline(onComplete?: () => void) {
   const [replayToken, setReplayToken] = useState(0);
@@ -51,7 +52,6 @@ export function useIntroTimeline(onComplete?: () => void) {
 
   const logoPeek = useSharedValue(0);
   const logoLaunch = useSharedValue(0);
-  /** 0 until empty bowl beat — then snapped on before the rise. */
   const logoOpacity = useSharedValue(0);
 
   const markPhase = useCallback((label: string) => {
@@ -116,39 +116,45 @@ export function useIntroTimeline(onComplete?: () => void) {
     };
 
     resetValues();
-    markPhase('drop');
+    markPhase('first-drop');
 
-    const dropEnd =
-      DURATIONS.foodDrop + (FOOD_COUNT - 1) * DURATIONS.foodStagger;
-
-    FOOD_IDS.forEach((_, index) => {
-      const releaseAt = index * DURATIONS.foodStagger;
-      const impactAt =
-        releaseAt + Math.round(DURATIONS.foodDrop * DURATIONS.impactAt);
-
-      later(releaseAt, () => {
-        foods[index].drop.value = withSpring(1, SPRINGS.drop);
-      });
-
-      // One settle spring per hit — no kick/settle sequence (avoids shake)
-      later(impactAt, () => {
-        markPhase(index === FOOD_COUNT - 1 ? 'level' : 'catch');
-        bowlRotate.value = withSpring(
-          BOWL_SETTLE_AFTER_HIT[index],
-          SPRINGS.bowlSettle,
-        );
-      });
+    // --- Phase A: leftmost orange into tilted bowl, then level ---
+    later(0, () => {
+      foods[0].drop.value = withSpring(1, SPRINGS.drop);
     });
 
-    const afterFull = dropEnd + DURATIONS.holdAfterFull;
+    const firstHit = Math.round(DURATIONS.firstDrop * DURATIONS.impactAt);
+    later(firstHit, () => {
+      markPhase('level');
+      bowlRotate.value = withSpring(0, SPRINGS.bowlLevel);
+    });
+
+    const restStart =
+      firstHit + DURATIONS.holdAfterLevel + 200; /* bowl mostly level */
+
+    // --- Phase B: remaining pieces into a straight bowl ---
+    for (let i = 1; i < FOOD_COUNT; i++) {
+      const releaseAt = restStart + (i - 1) * DURATIONS.restStagger;
+      later(releaseAt, () => {
+        markPhase('fill');
+        foods[i].drop.value = withSpring(1, SPRINGS.drop);
+      });
+    }
+
+    const restEnd =
+      restStart +
+      DURATIONS.restDrop +
+      (FOOD_COUNT - 2) * DURATIONS.restStagger;
+
+    const afterFull = restEnd + DURATIONS.holdAfterFull;
 
     later(afterFull, () => {
       markPhase('collapse');
       foodCollapse.value = withSpring(1, SPRINGS.peek);
       foods.forEach((f, i) => {
         f.opacity.value = withDelay(
-          i * 40,
-          withTiming(0, { duration: DURATIONS.collapse * 0.7 }),
+          i * 35,
+          withTiming(0, { duration: DURATIONS.collapse * 0.65 }),
         );
       });
     });
@@ -156,30 +162,39 @@ export function useIntroTimeline(onComplete?: () => void) {
     const afterEmpty = afterFull + DURATIONS.collapse + DURATIONS.holdEmpty;
 
     later(afterEmpty, () => {
-      markPhase('peek');
-      // Snap visible behind the bowl, then rise by Y only
+      markPhase('smile-ready');
+      // Appear behind the bowl while still fully buried
       logoOpacity.value = 1;
+      logoPeek.value = 0;
+    });
+
+    later(afterEmpty + DURATIONS.holdBeforePeek, () => {
+      markPhase('peek');
       logoPeek.value = withSpring(1, SPRINGS.peek);
     });
 
-    const afterPeek = afterEmpty + DURATIONS.peek + DURATIONS.holdAfterPeek;
+    const afterPeek =
+      afterEmpty +
+      DURATIONS.holdBeforePeek +
+      DURATIONS.peek +
+      DURATIONS.holdAfterPeek;
 
     later(afterPeek, () => {
       markPhase('launch');
       logoLaunch.value = withSpring(1, SPRINGS.launch);
       bowlTranslateY.value = withSpring(560, {
         ...SPRINGS.launch,
-        stiffness: 160,
+        stiffness: 150,
       });
-      bowlRotate.value = withTiming(-18, {
+      bowlRotate.value = withTiming(-14, {
         duration: DURATIONS.launch,
         easing: Easing.out(Easing.cubic),
       });
       bowlOpacity.value = withDelay(
         Math.round(DURATIONS.launch * 0.4),
-        withTiming(0, { duration: 220 }),
+        withTiming(0, { duration: 200 }),
       );
-      later(DURATIONS.launch + 80, () => finish());
+      later(DURATIONS.launch + 60, () => finish());
     });
 
     return () => {

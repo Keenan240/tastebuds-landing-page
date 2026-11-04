@@ -1,4 +1,4 @@
-/** Tunable intro timing, copy, and design tokens. Swap values here to match design review. */
+/** Tunable intro timing, copy, and design tokens. */
 
 export const COLORS = {
   background: '#FDFBF4',
@@ -20,38 +20,43 @@ export const HUNGRY_LINES = [
 ] as const;
 export const HUNGRY_TEXT = HUNGRY_LINES.join('\n');
 
-/** Starting tilt — settles step-by-step as each piece lands. */
+/** Bowl starts tilted; first (leftmost) piece levels it. */
 export const BOWL_START_TILT = 16;
 
 export const FOOD_COUNT = 4;
 
-export const FOOD_IDS = ['pepper', 'leek', 'tomato', 'radish'] as const;
+/**
+ * Drop order: orange/tomato first (leftmost) → levels the bowl,
+ * then the rest fall into a straight bowl.
+ */
+export const FOOD_IDS = ['tomato', 'leek', 'radish', 'pepper'] as const;
 export type FoodId = (typeof FOOD_IDS)[number];
 
-/**
- * Target bowl angle after each landing (one spring per hit — no kick/settle fight).
- * Timed when the drop visually bottoms out.
- */
-export const BOWL_SETTLE_AFTER_HIT = [11, 6, 2, 0] as const;
-
 export const DURATIONS = {
-  foodDrop: 920,
-  foodStagger: 150,
-  /** When the piece hits relative to its drop spring start */
-  impactAt: 0.72,
-  holdAfterFull: 320,
-  collapse: 480,
-  holdEmpty: 400,
-  peek: 420,
-  holdAfterPeek: 360,
-  launch: 580,
+  /** First piece into the tilted bowl */
+  firstDrop: 780,
+  /** Rest of pieces into the leveled bowl */
+  restDrop: 720,
+  restStagger: 120,
+  /** Hit timing as fraction of that piece's drop */
+  impactAt: 0.78,
+  /** Beat after bowl is level before the rest fall */
+  holdAfterLevel: 280,
+  holdAfterFull: 300,
+  collapse: 420,
+  holdEmpty: 360,
+  /** Short beat with smile on but still buried, then rise */
+  holdBeforePeek: 80,
+  peek: 380,
+  holdAfterPeek: 320,
+  launch: 520,
 } as const;
 
 export const SPRINGS = {
-  drop: { damping: 14, stiffness: 115, mass: 1.05 },
-  bowlSettle: { damping: 18, stiffness: 140, mass: 1 },
-  peek: { damping: 18, stiffness: 130, mass: 0.95 },
-  launch: { damping: 13, stiffness: 200, mass: 0.75 },
+  drop: { damping: 16, stiffness: 140, mass: 0.95 },
+  bowlLevel: { damping: 16, stiffness: 150, mass: 0.9 },
+  peek: { damping: 20, stiffness: 120, mass: 1 },
+  launch: { damping: 14, stiffness: 190, mass: 0.8 },
 } as const;
 
 export const IPHONE = {
@@ -65,7 +70,7 @@ export const LAYOUT = {
   bowlHeight: 124,
   bowlBottomRatio: 0.32,
   foodSize: 120,
-  foodCascadeGap: 130,
+  foodCascadeGap: 140,
   logoPeekSize: 52,
   logoTopSize: 48,
   logoTopOffset: 52,
@@ -80,15 +85,16 @@ export const FOOD_PEEK: Record<
   FoodId,
   { x: number; y: number; rotate: number; scale: number }
 > = {
-  tomato: { x: -62, y: -6, rotate: -12, scale: 1 },
-  leek: { x: -10, y: -48, rotate: -38, scale: 1.08 },
-  radish: { x: 32, y: -34, rotate: 22, scale: 1.02 },
-  pepper: { x: 68, y: -10, rotate: 18, scale: 1.05 },
+  // Smaller orange, tucked deeper so it doesn't crest the tilted rim
+  tomato: { x: -58, y: 8, rotate: -8, scale: 0.72 },
+  leek: { x: -6, y: -40, rotate: -36, scale: 1.05 },
+  radish: { x: 34, y: -28, rotate: 20, scale: 1 },
+  pepper: { x: 66, y: -8, rotate: 16, scale: 1.02 },
 };
 
 export const FOOD_START: Record<FoodId, { x: number; rotate: number }> = {
-  pepper: { x: 6, rotate: -8 },
-  leek: { x: -4, rotate: 24 },
-  tomato: { x: 2, rotate: -6 },
-  radish: { x: -8, rotate: 14 },
+  tomato: { x: -40, rotate: -10 },
+  leek: { x: -4, rotate: 20 },
+  radish: { x: 8, rotate: 12 },
+  pepper: { x: 20, rotate: -6 },
 };
