@@ -13,7 +13,6 @@ import Svg, { Path } from 'react-native-svg';
 import { useSharedValue } from 'react-native-reanimated';
 
 import { LandingChrome } from '../intro/components/LandingChrome';
-import { DishCard } from './components/DishCard';
 import { FadeIn } from './components/FadeIn';
 import { GetStartedButton } from './components/GetStartedButton';
 import { LANDING } from './tokens';
@@ -21,7 +20,7 @@ import { LANDING } from './tokens';
 const WORDMARK = require('../../assets/landing/wordmark.png');
 const CARD_KKATSU = require('../../assets/landing/card-kkatsu.png');
 const CARD_KIMCHI = require('../../assets/landing/card-kimchi.png');
-const PHO_FOOD = require('../../assets/landing/pho-food.png');
+const CARD_PHO = require('../../assets/landing/card-pho.png');
 const CARD_DANDAN = require('../../assets/landing/card-dandan.png');
 const LOG_FEEDBACK = require('../../assets/landing/log-feedback.png');
 
@@ -30,6 +29,7 @@ const CARD_HEIGHT = 234;
 const DISH_ASSETS = [
   { source: CARD_KKATSU, width: CARD_WIDTH },
   { source: CARD_KIMCHI, width: CARD_WIDTH },
+  { source: CARD_PHO, width: CARD_WIDTH },
 ] as const;
 
 const DANDAN_ASPECT = 2024 / 1604;
@@ -121,14 +121,14 @@ export function LandingPage({ onReplayIntro }: Props) {
             </Text>
           </FadeIn>
           <FadeIn>
-            <Text style={styles.sectionBody}>
+            <Text style={[styles.sectionBody, styles.personalBody]}>
               Tastebuds understands your taste profile and shows you suggestions
               curated to what you like.
             </Text>
           </FadeIn>
         </View>
 
-        <FadeIn>
+        <FadeIn style={styles.carouselWrap}>
           <ScrollView
             horizontal
             showsHorizontalScrollIndicator={false}
@@ -151,23 +151,12 @@ export function LandingPage({ onReplayIntro }: Props) {
                   />
                 </View>
               ))}
-              {/* Full third card — source export was only a clipped peek */}
-              <DishCard
-                title="Beef pho"
-                price="$12.99"
-                match="98% match"
-                tags={['savory']}
-                image={PHO_FOOD}
-                restaurant="Mekong"
-                meta="1.2 km — Open"
-                width={CARD_WIDTH}
-              />
             </View>
           </ScrollView>
         </FadeIn>
 
         {/* Discover */}
-        <View style={styles.section}>
+        <View style={[styles.section, styles.discoverSection]}>
           <FadeIn>
             <Text style={styles.sectionTitle}>
               Discover new dishes with confidence
@@ -329,6 +318,17 @@ const styles = StyleSheet.create({
     textAlign: 'center',
     fontFamily: 'DMSans_500Medium',
     maxWidth: 331,
+  },
+  /** 36px between personal copy and the dish carousel */
+  personalBody: {
+    marginBottom: 36,
+  },
+  /** Extra room under the carousel before Discover */
+  carouselWrap: {
+    marginBottom: 48,
+  },
+  discoverSection: {
+    paddingTop: 0,
   },
   /** 36px between discover copy and the full-bleed photo card */
   discoverBody: {
