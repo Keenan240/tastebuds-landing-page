@@ -11,6 +11,7 @@ import {
 
 import {
   BOWL_OVERSHOOT_LEFT,
+  BOWL_RUMBLE_ANGLES,
   BOWL_START_TILT,
   DURATIONS,
   FOOD_COUNT,
@@ -175,21 +176,17 @@ export function useIntroTimeline(onComplete?: () => void) {
 
     const afterEmpty = afterFull + DURATIONS.collapse + DURATIONS.holdEmpty;
 
-    // Empty bowl rumble — aggressive back-and-forth before the smile peeks
+    // Empty bowl rumble — many fast left/right ticks (not slow springs)
     later(afterEmpty, () => {
       markPhase('shake');
+      const tick = { duration: DURATIONS.shakeTick, easing: Easing.linear };
       bowlRotate.value = withSequence(
-        withSpring(14, SPRINGS.bowlShake),
-        withSpring(-16, SPRINGS.bowlShake),
-        withSpring(12, SPRINGS.bowlShake),
-        withSpring(-10, SPRINGS.bowlShake),
-        withSpring(7, SPRINGS.bowlShake),
-        withSpring(-5, SPRINGS.bowlShake),
-        withSpring(0, SPRINGS.bowlStraighten),
+        ...BOWL_RUMBLE_ANGLES.map((angle) => withTiming(angle, tick)),
       );
     });
 
-    const afterShake = afterEmpty + DURATIONS.prePeekShake;
+    const afterShake =
+      afterEmpty + BOWL_RUMBLE_ANGLES.length * DURATIONS.shakeTick + 40;
 
     later(afterShake, () => {
       markPhase('smile-ready');

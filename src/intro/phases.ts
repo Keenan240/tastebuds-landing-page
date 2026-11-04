@@ -52,13 +52,16 @@ export const DURATIONS = {
   collapse: 420,
   /** Empty bowl beat before the pre-peek shake */
   holdEmpty: 280,
-  /** Aggressive rumble before the smile rises */
-  prePeekShake: 480,
+  /** Fast multi-swing rumble before the smile rises */
+  prePeekShake: 420,
   /** Short beat with smile on but still buried, then rise */
-  holdBeforePeek: 60,
-  peek: 380,
-  holdAfterPeek: 320,
+  holdBeforePeek: 50,
+  peek: 360,
+  /** Pause while the logo is peeked before launch */
+  holdAfterPeek: 520,
   launch: 520,
+  /** One half-swing of the rumble */
+  shakeTick: 38,
 } as const;
 
 export const SPRINGS = {
@@ -70,11 +73,14 @@ export const SPRINGS = {
   bowlStraighten: { damping: 13, stiffness: 360, mass: 0.45 },
   /** Slightly softer drop for the fill pieces */
   restDrop: { damping: 16, stiffness: 130, mass: 1 },
-  /** Hard rumble before logo peek — snappy left/right thrash */
-  bowlShake: { damping: 8, stiffness: 520, mass: 0.3 },
   peek: { damping: 20, stiffness: 120, mass: 1 },
   launch: { damping: 14, stiffness: 190, mass: 0.8 },
 } as const;
+
+/** Rapid left/right angles for the pre-peek rumble (timing, not springs). */
+export const BOWL_RUMBLE_ANGLES = [
+  11, -13, 12, -11, 10, -9, 8, -7, 5, -4, 2, 0,
+] as const;
 
 export const IPHONE = {
   width: 390,
