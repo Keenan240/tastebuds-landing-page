@@ -4,6 +4,7 @@ import Animated, {
   Easing,
   useAnimatedStyle,
   useSharedValue,
+  withDelay,
   withTiming,
 } from 'react-native-reanimated';
 
@@ -12,29 +13,34 @@ import { ENTRANCE } from '../tokens';
 type Props = {
   children: React.ReactNode;
   style?: StyleProp<ViewStyle>;
-  /** All FadeIns on the landing share this default so they bloom together. */
+  /** Cascade order from the top of the page (0 = first). */
+  index?: number;
   duration?: number;
   pointerEvents?: ViewProps['pointerEvents'];
 };
 
 /**
- * Opacity 0 → 1 with a slight rise on mount. Each landing unit uses this so
- * the page blooms as pieces, not as one fading sheet.
+ * Opacity 0 → 1 with a slight rise, delayed by `index` so pieces cascade
+ * top → bottom instead of blooming all at once.
  */
 export function FadeIn({
   children,
   style,
+  index = 0,
   duration = ENTRANCE.duration,
   pointerEvents,
 }: Props) {
   const progress = useSharedValue(0);
 
   useEffect(() => {
-    progress.value = withTiming(1, {
-      duration,
-      easing: Easing.out(Easing.cubic),
-    });
-  }, [duration, progress]);
+    progress.value = withDelay(
+      index * ENTRANCE.stagger,
+      withTiming(1, {
+        duration,
+        easing: Easing.out(Easing.cubic),
+      }),
+    );
+  }, [duration, index, progress]);
 
   const anim = useAnimatedStyle(() => ({
     opacity: progress.value,

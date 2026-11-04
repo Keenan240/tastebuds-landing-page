@@ -17,9 +17,11 @@ export const LANDING = {
   openGreen: '#6B705C',
 } as const;
 
-/** Simultaneous per-component entrance (not a whole-page fade). */
+/** Top-to-bottom cascade entrance for landing pieces. */
 export const ENTRANCE = {
-  duration: 620,
+  duration: 560,
+  /** ms between each successive piece */
+  stagger: 78,
   /** px the piece rises while fading in */
-  rise: 16,
+  rise: 14,
 } as const;

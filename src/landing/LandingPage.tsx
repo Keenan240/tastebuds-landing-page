@@ -62,7 +62,7 @@ export function LandingPage({ onReplayIntro }: Props) {
         ]}
         showsVerticalScrollIndicator={false}
       >
-        <FadeIn style={styles.wordmarkWrap}>
+        <FadeIn index={0} style={styles.wordmarkWrap}>
           <Image
             source={WORDMARK}
             style={styles.wordmark}
@@ -81,7 +81,7 @@ export function LandingPage({ onReplayIntro }: Props) {
         </FadeIn>
 
         <View style={styles.hero}>
-          <FadeIn style={styles.titleWrap}>
+          <FadeIn index={1} style={styles.titleWrap}>
             <Text style={styles.heroTitle}>Hungry?</Text>
             <View style={styles.fixLine}>
               <Text style={styles.heroTitle}>Let’s Fix That!</Text>
@@ -102,25 +102,25 @@ export function LandingPage({ onReplayIntro }: Props) {
             </View>
           </FadeIn>
 
-          <FadeIn>
+          <FadeIn index={2}>
             <Text style={styles.heroBody}>
               Tastebuds is a personalized food discovery that matches you with
               dishes you’ll love!
             </Text>
           </FadeIn>
 
-          <FadeIn style={styles.heroBtnWrap}>
+          <FadeIn index={3} style={styles.heroBtnWrap}>
             <GetStartedButton style={styles.heroBtn} />
           </FadeIn>
         </View>
 
         <View style={[styles.section, styles.sectionAfterHero]}>
-          <FadeIn>
+          <FadeIn index={4}>
             <Text style={styles.sectionTitle}>
               Your taste is personal.{'\n'}Your picks should be, too.
             </Text>
           </FadeIn>
-          <FadeIn>
+          <FadeIn index={5}>
             <Text style={[styles.sectionBody, styles.personalBody]}>
               Tastebuds understands your taste profile and shows you suggestions
               curated to what you like.
@@ -128,7 +128,7 @@ export function LandingPage({ onReplayIntro }: Props) {
           </FadeIn>
         </View>
 
-        <FadeIn style={styles.carouselWrap}>
+        <View style={styles.carouselWrap}>
           <ScrollView
             horizontal
             showsHorizontalScrollIndicator={false}
@@ -137,32 +137,33 @@ export function LandingPage({ onReplayIntro }: Props) {
           >
             <View style={styles.carouselRow}>
               {DISH_ASSETS.map((card, i) => (
-                <View
-                  key={i}
-                  style={[
-                    styles.carouselCard,
-                    { width: card.width, height: CARD_HEIGHT },
-                  ]}
-                >
-                  <Image
-                    source={card.source}
-                    style={{ width: card.width, height: CARD_HEIGHT }}
-                    resizeMode="cover"
-                  />
-                </View>
+                <FadeIn key={i} index={6 + i}>
+                  <View
+                    style={[
+                      styles.carouselCard,
+                      { width: card.width, height: CARD_HEIGHT },
+                    ]}
+                  >
+                    <Image
+                      source={card.source}
+                      style={{ width: card.width, height: CARD_HEIGHT }}
+                      resizeMode="cover"
+                    />
+                  </View>
+                </FadeIn>
               ))}
             </View>
           </ScrollView>
-        </FadeIn>
+        </View>
 
         {/* Discover */}
         <View style={[styles.section, styles.discoverSection]}>
-          <FadeIn>
+          <FadeIn index={9}>
             <Text style={styles.sectionTitle}>
               Discover new dishes with confidence
             </Text>
           </FadeIn>
-          <FadeIn>
+          <FadeIn index={10}>
             <Text style={[styles.sectionBody, styles.discoverBody]}>
               We use your taste profile to show you why a dish is perfect or
               maybe not for you.
@@ -170,7 +171,7 @@ export function LandingPage({ onReplayIntro }: Props) {
           </FadeIn>
         </View>
 
-        <FadeIn style={styles.dandanWrap}>
+        <FadeIn index={11} style={styles.dandanWrap}>
           {pageW > 0 ? (
             <Image
               source={CARD_DANDAN}
@@ -183,10 +184,10 @@ export function LandingPage({ onReplayIntro }: Props) {
 
         {/* Logs — 48px below the discover photo block */}
         <View style={[styles.section, styles.logsSection]}>
-          <FadeIn>
+          <FadeIn index={12}>
             <Text style={styles.sectionTitle}>We learn from your logs!</Text>
           </FadeIn>
-          <FadeIn>
+          <FadeIn index={13}>
             <Text style={styles.sectionBody}>
               After finishing a dish you can log what you ate and we’ll take
               that information to give you even better recommendations.
@@ -194,7 +195,7 @@ export function LandingPage({ onReplayIntro }: Props) {
           </FadeIn>
         </View>
 
-        <FadeIn style={styles.logWrap}>
+        <FadeIn index={14} style={styles.logWrap}>
           <Image
             source={LOG_FEEDBACK}
             style={styles.logImage}
@@ -203,7 +204,7 @@ export function LandingPage({ onReplayIntro }: Props) {
           />
         </FadeIn>
 
-        <FadeIn style={styles.footer}>
+        <FadeIn index={15} style={styles.footer}>
           <Image
             source={WORDMARK}
             style={styles.footerMark}
@@ -217,7 +218,7 @@ export function LandingPage({ onReplayIntro }: Props) {
         </FadeIn>
       </ScrollView>
 
-      <FadeIn style={styles.chromeFade} pointerEvents="box-none">
+      <FadeIn index={8} style={styles.chromeFade} pointerEvents="box-none">
         <LandingChrome opacity={chromeOpacity} translateY={chromeY} />
       </FadeIn>
     </View>
