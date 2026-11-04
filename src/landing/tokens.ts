@@ -17,11 +17,13 @@ export const LANDING = {
   openGreen: '#6B705C',
 } as const;
 
-/** Top-to-bottom cascade entrance for landing pieces. */
+/** Landing entrance motion. */
 export const ENTRANCE = {
   duration: 560,
-  /** ms between each successive piece */
-  stagger: 78,
+  /** ms between eager (above-the-fold) pieces */
+  stagger: 70,
   /** px the piece rises while fading in */
   rise: 14,
+  /** fraction of viewport height — reveal when element crosses this line */
+  revealAt: 0.88,
 } as const;

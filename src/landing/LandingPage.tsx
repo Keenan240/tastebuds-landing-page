@@ -1,7 +1,9 @@
-import React, { useCallback, useState } from 'react';
+import React, { useCallback, useRef, useState } from 'react';
 import {
   Image,
   LayoutChangeEvent,
+  NativeScrollEvent,
+  NativeSyntheticEvent,
   Pressable,
   ScrollView,
   StyleSheet,
@@ -10,11 +12,16 @@ import {
 } from 'react-native';
 import { useSafeAreaInsets } from 'react-native-safe-area-context';
 import Svg, { Path } from 'react-native-svg';
-import { useSharedValue } from 'react-native-reanimated';
+import {
+  useAnimatedScrollHandler,
+  useSharedValue,
+} from 'react-native-reanimated';
+import Animated from 'react-native-reanimated';
 
 import { LandingChrome } from '../intro/components/LandingChrome';
 import { FadeIn } from './components/FadeIn';
 import { GetStartedButton } from './components/GetStartedButton';
+import { ScrollRevealProvider, type NativeViewLike } from './ScrollReveal';
 import { LANDING } from './tokens';
 
 const WORDMARK = require('../../assets/landing/wordmark.png');
@@ -34,6 +41,8 @@ const DISH_ASSETS = [
 
 const DANDAN_ASPECT = 2024 / 1604;
 
+const AnimatedScrollView = Animated.createAnimatedComponent(ScrollView);
+
 type Props = {
   onReplayIntro?: () => void;
 };
@@ -42,6 +51,9 @@ export function LandingPage({ onReplayIntro }: Props) {
   const insets = useSafeAreaInsets();
   const chromeOpacity = useSharedValue(1);
   const chromeY = useSharedValue(0);
+  const scrollY = useSharedValue(0);
+  const viewportH = useSharedValue(800);
+  const contentRef = useRef<NativeViewLike | null>(null);
   const [pageW, setPageW] = useState(0);
 
   const onRootLayout = useCallback((e: LayoutChangeEvent) => {
@@ -49,179 +61,200 @@ export function LandingPage({ onReplayIntro }: Props) {
     if (w > 0) setPageW(w);
   }, []);
 
+  const onScrollViewLayout = useCallback((e: LayoutChangeEvent) => {
+    viewportH.value = e.nativeEvent.layout.height;
+  }, [viewportH]);
+
+  const onScroll = useAnimatedScrollHandler({
+    onScroll: (e) => {
+      scrollY.value = e.contentOffset.y;
+    },
+  });
+
+  // Fallback for environments where the animated handler doesn’t attach
+  const onScrollFallback = useCallback(
+    (e: NativeSyntheticEvent<NativeScrollEvent>) => {
+      scrollY.value = e.nativeEvent.contentOffset.y;
+    },
+    [scrollY],
+  );
+
   return (
-    <View style={styles.root} onLayout={onRootLayout}>
-      <ScrollView
-        style={styles.scroll}
-        contentContainerStyle={[
-          styles.content,
-          {
-            paddingTop: insets.top + 18,
-            paddingBottom: insets.bottom + 120,
-          },
-        ]}
-        showsVerticalScrollIndicator={false}
-      >
-        <FadeIn index={0} style={styles.wordmarkWrap}>
-          <Image
-            source={WORDMARK}
-            style={styles.wordmark}
-            resizeMode="contain"
-            accessibilityLabel="tastebuds"
-          />
-          {onReplayIntro ? (
-            <Pressable
-              onPress={onReplayIntro}
-              style={styles.replay}
-              hitSlop={8}
-            >
-              <Text style={styles.replayLabel}>Replay</Text>
-            </Pressable>
-          ) : null}
-        </FadeIn>
+    <ScrollRevealProvider value={{ scrollY, viewportH, contentRef }}>
+      <View style={styles.root} onLayout={onRootLayout}>
+        <AnimatedScrollView
+          style={styles.scroll}
+          contentContainerStyle={[
+            styles.content,
+            {
+              paddingTop: insets.top + 18,
+              paddingBottom: insets.bottom + 120,
+            },
+          ]}
+          showsVerticalScrollIndicator={false}
+          onLayout={onScrollViewLayout}
+          onScroll={onScroll}
+          scrollEventThrottle={16}
+          // @ts-expect-error RN web sometimes needs the JS path too
+          onScrollEvent={onScrollFallback}
+        >
+          <View ref={contentRef as never} collapsable={false}>
+            <FadeIn eager index={0} style={styles.wordmarkWrap}>
+              <Image
+                source={WORDMARK}
+                style={styles.wordmark}
+                resizeMode="contain"
+                accessibilityLabel="tastebuds"
+              />
+              {onReplayIntro ? (
+                <Pressable
+                  onPress={onReplayIntro}
+                  style={styles.replay}
+                  hitSlop={8}
+                >
+                  <Text style={styles.replayLabel}>Replay</Text>
+                </Pressable>
+              ) : null}
+            </FadeIn>
 
-        <View style={styles.hero}>
-          <FadeIn index={1} style={styles.titleWrap}>
-            <Text style={styles.heroTitle}>Hungry?</Text>
-            <View style={styles.fixLine}>
-              <Text style={styles.heroTitle}>Let’s Fix That!</Text>
-              <Svg
-                width={210}
-                height={16}
-                viewBox="0 0 210 16"
-                style={styles.squiggle}
-              >
-                <Path
-                  d="M4 11 C 36 2, 72 14, 108 7 S 168 2, 206 10"
-                  stroke={LANDING.pistachio}
-                  strokeWidth={9}
-                  strokeLinecap="round"
-                  fill="none"
-                />
-              </Svg>
-            </View>
-          </FadeIn>
-
-          <FadeIn index={2}>
-            <Text style={styles.heroBody}>
-              Tastebuds is a personalized food discovery that matches you with
-              dishes you’ll love!
-            </Text>
-          </FadeIn>
-
-          <FadeIn index={3} style={styles.heroBtnWrap}>
-            <GetStartedButton style={styles.heroBtn} />
-          </FadeIn>
-        </View>
-
-        <View style={[styles.section, styles.sectionAfterHero]}>
-          <FadeIn index={4}>
-            <Text style={styles.sectionTitle}>
-              Your taste is personal.{'\n'}Your picks should be, too.
-            </Text>
-          </FadeIn>
-          <FadeIn index={5}>
-            <Text style={[styles.sectionBody, styles.personalBody]}>
-              Tastebuds understands your taste profile and shows you suggestions
-              curated to what you like.
-            </Text>
-          </FadeIn>
-        </View>
-
-        <View style={styles.carouselWrap}>
-          <ScrollView
-            horizontal
-            showsHorizontalScrollIndicator={false}
-            contentContainerStyle={styles.carousel}
-            decelerationRate="fast"
-          >
-            <View style={styles.carouselRow}>
-              {DISH_ASSETS.map((card, i) => (
-                <FadeIn key={i} index={6 + i}>
-                  <View
-                    style={[
-                      styles.carouselCard,
-                      { width: card.width, height: CARD_HEIGHT },
-                    ]}
-                  >
-                    <Image
-                      source={card.source}
-                      style={{ width: card.width, height: CARD_HEIGHT }}
-                      resizeMode="cover"
-                    />
+            <View style={styles.hero}>
+              <FadeIn eager index={1} style={styles.titleWrap}>
+                <Text style={styles.heroTitle}>Hungry?</Text>
+                <View style={styles.fixLine}>
+                  <Text style={styles.heroTitle}>Let’s Fix That!</Text>
+                  <View style={styles.brushWrap} pointerEvents="none">
+                    <Svg width={210} height={18} viewBox="0 0 210 18">
+                      <Path
+                        d="M4 9.2 C 10 6.4, 22 5.6, 36 5.8 L 174 5.8 C 188 5.6, 200 6.4, 206 9.2 C 200 11.8, 188 12.4, 174 12.2 L 36 12.2 C 22 12.4, 10 11.8, 4 9.2 Z"
+                        fill={LANDING.pistachio}
+                      />
+                    </Svg>
                   </View>
-                </FadeIn>
-              ))}
+                </View>
+              </FadeIn>
+
+              <FadeIn eager index={2}>
+                <Text style={styles.heroBody}>
+                  Tastebuds is a personalized food discovery that matches you
+                  with dishes you’ll love!
+                </Text>
+              </FadeIn>
+
+              <FadeIn eager index={3} style={styles.heroBtnWrap}>
+                <GetStartedButton style={styles.heroBtn} />
+              </FadeIn>
             </View>
-          </ScrollView>
-        </View>
 
-        {/* Discover */}
-        <View style={[styles.section, styles.discoverSection]}>
-          <FadeIn index={9}>
-            <Text style={styles.sectionTitle}>
-              Discover new dishes with confidence
-            </Text>
-          </FadeIn>
-          <FadeIn index={10}>
-            <Text style={[styles.sectionBody, styles.discoverBody]}>
-              We use your taste profile to show you why a dish is perfect or
-              maybe not for you.
-            </Text>
-          </FadeIn>
-        </View>
+            <View style={[styles.section, styles.sectionAfterHero]}>
+              <FadeIn>
+                <Text style={styles.sectionTitle}>
+                  Your taste is personal.{'\n'}Your picks should be, too.
+                </Text>
+              </FadeIn>
+              <FadeIn>
+                <Text style={[styles.sectionBody, styles.personalBody]}>
+                  Tastebuds understands your taste profile and shows you
+                  suggestions curated to what you like.
+                </Text>
+              </FadeIn>
+            </View>
 
-        <FadeIn index={11} style={styles.dandanWrap}>
-          {pageW > 0 ? (
-            <Image
-              source={CARD_DANDAN}
-              style={{ width: pageW, height: pageW * DANDAN_ASPECT }}
-              resizeMode="stretch"
-              accessibilityLabel="Dandan noodles match card"
-            />
-          ) : null}
-        </FadeIn>
+            <View style={styles.carouselWrap}>
+              <ScrollView
+                horizontal
+                showsHorizontalScrollIndicator={false}
+                contentContainerStyle={styles.carousel}
+                decelerationRate="fast"
+              >
+                <View style={styles.carouselRow}>
+                  {DISH_ASSETS.map((card, i) => (
+                    <FadeIn key={i}>
+                      <View
+                        style={[
+                          styles.carouselCard,
+                          { width: card.width, height: CARD_HEIGHT },
+                        ]}
+                      >
+                        <Image
+                          source={card.source}
+                          style={{ width: card.width, height: CARD_HEIGHT }}
+                          resizeMode="cover"
+                        />
+                      </View>
+                    </FadeIn>
+                  ))}
+                </View>
+              </ScrollView>
+            </View>
 
-        {/* Logs — 48px below the discover photo block */}
-        <View style={[styles.section, styles.logsSection]}>
-          <FadeIn index={12}>
-            <Text style={styles.sectionTitle}>We learn from your logs!</Text>
-          </FadeIn>
-          <FadeIn index={13}>
-            <Text style={styles.sectionBody}>
-              After finishing a dish you can log what you ate and we’ll take
-              that information to give you even better recommendations.
-            </Text>
-          </FadeIn>
-        </View>
+            <View style={[styles.section, styles.discoverSection]}>
+              <FadeIn>
+                <Text style={styles.sectionTitle}>
+                  Discover new dishes with confidence
+                </Text>
+              </FadeIn>
+              <FadeIn>
+                <Text style={[styles.sectionBody, styles.discoverBody]}>
+                  We use your taste profile to show you why a dish is perfect or
+                  maybe not for you.
+                </Text>
+              </FadeIn>
+            </View>
 
-        <FadeIn index={14} style={styles.logWrap}>
-          <Image
-            source={LOG_FEEDBACK}
-            style={styles.logImage}
-            resizeMode="contain"
-            accessibilityLabel="Meal log feedback"
-          />
-        </FadeIn>
+            {/* Big image — no scroll fade */}
+            <View style={styles.dandanWrap}>
+              {pageW > 0 ? (
+                <Image
+                  source={CARD_DANDAN}
+                  style={{ width: pageW, height: pageW * DANDAN_ASPECT }}
+                  resizeMode="stretch"
+                  accessibilityLabel="Dandan noodles match card"
+                />
+              ) : null}
+            </View>
 
-        <FadeIn index={15} style={styles.footer}>
-          <Image
-            source={WORDMARK}
-            style={styles.footerMark}
-            resizeMode="contain"
-          />
-          <View style={styles.footerRule} />
-          <View style={styles.footerRow}>
-            <Text style={styles.footerMeta}>© Tastebuds</Text>
-            <Text style={styles.footerMeta}>Built by QTMA</Text>
+            <View style={[styles.section, styles.logsSection]}>
+              <FadeIn>
+                <Text style={styles.sectionTitle}>We learn from your logs!</Text>
+              </FadeIn>
+              <FadeIn>
+                <Text style={styles.sectionBody}>
+                  After finishing a dish you can log what you ate and we’ll take
+                  that information to give you even better recommendations.
+                </Text>
+              </FadeIn>
+            </View>
+
+            {/* Big image — no scroll fade */}
+            <View style={styles.logWrap}>
+              <Image
+                source={LOG_FEEDBACK}
+                style={styles.logImage}
+                resizeMode="contain"
+                accessibilityLabel="Meal log feedback"
+              />
+            </View>
+
+            <FadeIn style={styles.footer}>
+              <Image
+                source={WORDMARK}
+                style={styles.footerMark}
+                resizeMode="contain"
+              />
+              <View style={styles.footerRule} />
+              <View style={styles.footerRow}>
+                <Text style={styles.footerMeta}>© Tastebuds</Text>
+                <Text style={styles.footerMeta}>Built by QTMA</Text>
+              </View>
+            </FadeIn>
           </View>
-        </FadeIn>
-      </ScrollView>
+        </AnimatedScrollView>
 
-      <FadeIn index={8} style={styles.chromeFade} pointerEvents="box-none">
-        <LandingChrome opacity={chromeOpacity} translateY={chromeY} />
-      </FadeIn>
-    </View>
+        <FadeIn eager index={4} style={styles.chromeFade} pointerEvents="box-none">
+          <LandingChrome opacity={chromeOpacity} translateY={chromeY} />
+        </FadeIn>
+      </View>
+    </ScrollRevealProvider>
   );
 }
 
@@ -278,8 +311,11 @@ const styles = StyleSheet.create({
     fontFamily: 'Urbanist_600SemiBold',
     textAlign: 'center',
   },
-  squiggle: {
+  brushWrap: {
     marginTop: -8,
+    marginLeft: 6,
+    alignItems: 'center',
+    transform: [{ rotate: '-13deg' }],
   },
   heroBody: {
     color: LANDING.grey,
@@ -320,22 +356,18 @@ const styles = StyleSheet.create({
     fontFamily: 'DMSans_500Medium',
     maxWidth: 331,
   },
-  /** 36px between personal copy and the dish carousel */
   personalBody: {
     marginBottom: 36,
   },
-  /** Extra room under the carousel before Discover */
   carouselWrap: {
     marginBottom: 48,
   },
   discoverSection: {
     paddingTop: 0,
   },
-  /** 36px between discover copy and the full-bleed photo card */
   discoverBody: {
     marginBottom: 36,
   },
-  /** 48px between dandan block and logs section */
   logsSection: {
     marginTop: 48,
     paddingTop: 0,
