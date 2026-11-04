@@ -10,6 +10,21 @@ type Props = {
   onPress?: () => void;
 };
 
+/** Right-pointing arrow built from Views (reliable on RN web). */
+function ArrowRight({ color }: { color: string }) {
+  return (
+    <View style={styles.arrow} accessibilityElementsHidden>
+      <View style={[styles.arrowShaft, { backgroundColor: color }]} />
+      <View
+        style={[
+          styles.arrowHead,
+          { borderLeftColor: color },
+        ]}
+      />
+    </View>
+  );
+}
+
 export function GetStartedButton({
   label = 'Get Started',
   variant = 'carrot',
@@ -31,9 +46,7 @@ export function GetStartedButton({
     >
       <View style={styles.content}>
         <Text style={styles.label}>{label}</Text>
-        <Text style={styles.arrow} accessibilityElementsHidden>
-          →
-        </Text>
+        <ArrowRight color={LANDING.bg} />
       </View>
     </Pressable>
   );
@@ -57,7 +70,7 @@ const styles = StyleSheet.create({
   content: {
     flexDirection: 'row',
     alignItems: 'center',
-    gap: 8,
+    gap: 10,
   },
   carrot: {
     backgroundColor: LANDING.carrot,
@@ -77,10 +90,28 @@ const styles = StyleSheet.create({
     fontFamily: 'Urbanist_600SemiBold',
   },
   arrow: {
-    color: LANDING.bg,
-    fontSize: 18,
-    lineHeight: 20,
-    fontFamily: 'Urbanist_600SemiBold',
-    marginTop: -1,
+    width: 16,
+    height: 12,
+    justifyContent: 'center',
+  },
+  arrowShaft: {
+    position: 'absolute',
+    left: 0,
+    right: 5,
+    height: 2,
+    borderRadius: 1,
+    top: 5,
+  },
+  arrowHead: {
+    position: 'absolute',
+    right: 0,
+    top: 1,
+    width: 0,
+    height: 0,
+    borderTopWidth: 5,
+    borderBottomWidth: 5,
+    borderLeftWidth: 7,
+    borderTopColor: 'transparent',
+    borderBottomColor: 'transparent',
   },
 });
