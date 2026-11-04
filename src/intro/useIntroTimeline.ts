@@ -132,12 +132,12 @@ export function useIntroTimeline(onComplete?: () => void) {
     // Rest starts once the bowl has begun leveling — don't wait for a long settle
     const restStart = firstHit + DURATIONS.holdAfterLevel;
 
-    // --- Phase B: remaining pieces into a straight bowl ---
+    // --- Phase B: remaining pieces into a straight bowl (slower cascade) ---
     for (let i = 1; i < FOOD_COUNT; i++) {
       const releaseAt = restStart + (i - 1) * DURATIONS.restStagger;
       later(releaseAt, () => {
         markPhase('fill');
-        foods[i].drop.value = withSpring(1, SPRINGS.drop);
+        foods[i].drop.value = withSpring(1, SPRINGS.restDrop);
       });
     }
 

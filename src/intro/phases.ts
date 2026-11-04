@@ -35,16 +35,16 @@ export type FoodId = (typeof FOOD_IDS)[number];
 export const DURATIONS = {
   /** First piece into the tilted bowl — snappier so the catch reads clearly */
   firstDrop: 620,
-  /** Rest of pieces into the leveled bowl */
-  restDrop: 580,
-  restStagger: 85,
+  /** Rest of pieces into the leveled bowl — a touch slower than the orange */
+  restDrop: 780,
+  restStagger: 110,
   /**
    * When the orange "hits" / bowl starts leveling, as a fraction of firstDrop.
-   * Earlier than visual settle so leveling reads with the contact, not after.
+   * Early so straighten reads as part of the contact.
    */
-  impactAt: 0.48,
+  impactAt: 0.38,
   /** Beat after level starts before the rest cascade in */
-  holdAfterLevel: 90,
+  holdAfterLevel: 70,
   holdAfterFull: 260,
   collapse: 420,
   holdEmpty: 360,
