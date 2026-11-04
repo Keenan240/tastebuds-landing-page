@@ -125,8 +125,8 @@ export function LandingPage() {
 
               <FadeIn eager index={2}>
                 <Text style={styles.heroBody}>
-                  Tastebuds is a personalized food discovery that matches you
-                  with dishes you’ll love!
+                  Tastebuds is a personalized food discovery platform that
+                  matches you with dishes you’ll love!
                 </Text>
               </FadeIn>
 

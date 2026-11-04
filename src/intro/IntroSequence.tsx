@@ -1,11 +1,5 @@
 import React, { useCallback, useMemo, useState } from 'react';
-import {
-  LayoutChangeEvent,
-  Pressable,
-  StyleSheet,
-  Text,
-  View,
-} from 'react-native';
+import { LayoutChangeEvent, StyleSheet, View } from 'react-native';
 import { useSafeAreaInsets } from 'react-native-safe-area-context';
 import { StatusBar } from 'expo-status-bar';
 
@@ -89,20 +83,6 @@ export function IntroSequence({ onComplete }: Props) {
         </View>
       </View>
 
-      <Pressable
-        onPress={timeline.replay}
-        style={[styles.replay, { top: insets.top + 8 }]}
-        accessibilityRole="button"
-        accessibilityLabel="Replay intro animation"
-      >
-        <Text style={styles.replayLabel}>Replay</Text>
-      </Pressable>
-
-      {__DEV__ ? (
-        <Text style={[styles.phase, { top: insets.top + 12 }]}>
-          {timeline.phaseLabel}
-        </Text>
-      ) : null}
     </View>
   );
 }
@@ -125,29 +105,5 @@ const styles = StyleSheet.create({
     height: LAYOUT.bowlHeight + 140,
     justifyContent: 'flex-end',
     overflow: 'visible',
-  },
-  replay: {
-    position: 'absolute',
-    right: 16,
-    zIndex: 40,
-    paddingHorizontal: 14,
-    paddingVertical: 8,
-    borderRadius: 999,
-    backgroundColor: 'rgba(61, 31, 5, 0.08)',
-  },
-  replayLabel: {
-    color: COLORS.brown,
-    fontWeight: '700',
-    fontSize: 13,
-  },
-  phase: {
-    position: 'absolute',
-    left: 16,
-    zIndex: 40,
-    fontSize: 11,
-    color: COLORS.beige,
-    fontWeight: '600',
-    textTransform: 'uppercase',
-    letterSpacing: 0.6,
   },
 });
