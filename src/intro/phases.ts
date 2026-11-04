@@ -36,6 +36,8 @@ export const FOOD_IDS = ['tomato', 'leek', 'radish', 'pepper'] as const;
 export type FoodId = (typeof FOOD_IDS)[number];
 
 export const DURATIONS = {
+  /** Empty tilted bowl sits before the first piece falls */
+  holdBeforeFirstDrop: 520,
   /** Orange into the tilted bowl — a bit slower / weightier */
   firstDrop: 740,
   /** Rest of pieces into the leveled bowl */

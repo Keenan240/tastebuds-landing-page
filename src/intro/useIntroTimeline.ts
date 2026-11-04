@@ -123,14 +123,17 @@ export function useIntroTimeline(onComplete?: () => void) {
     };
 
     resetValues();
-    markPhase('first-drop');
+    markPhase('idle');
 
-    // --- Phase A: orange into tilted bowl → overshoot past level to the left ---
-    later(0, () => {
+    // --- Phase A: empty tilted bowl holds, then orange drops ---
+    later(DURATIONS.holdBeforeFirstDrop, () => {
+      markPhase('first-drop');
       foods[0].drop.value = withSpring(1, SPRINGS.drop);
     });
 
-    const firstHit = Math.round(DURATIONS.firstDrop * DURATIONS.impactAt);
+    const firstHit =
+      DURATIONS.holdBeforeFirstDrop +
+      Math.round(DURATIONS.firstDrop * DURATIONS.impactAt);
     later(firstHit, () => {
       markPhase('overshoot');
       bowlRotate.value = withSpring(

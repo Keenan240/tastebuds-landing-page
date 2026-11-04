@@ -1,5 +1,5 @@
 import React, { useCallback, useState } from 'react';
-import { ActivityIndicator, StyleSheet, View } from 'react-native';
+import { StyleSheet } from 'react-native';
 import { GestureHandlerRootView } from 'react-native-gesture-handler';
 import { SafeAreaProvider } from 'react-native-safe-area-context';
 import {
@@ -12,10 +12,11 @@ import { PhoneFrame } from './src/intro/components/PhoneFrame';
 import { IntroSequence } from './src/intro/IntroSequence';
 import { COLORS } from './src/intro/phases';
 import { LandingPage } from './src/landing/LandingPage';
-import { LANDING } from './src/landing/tokens';
 
 export default function App() {
-  const [fontsLoaded] = useFonts({
+  // Load fonts in the background — never block on a spinner; bowl intro
+  // can sit empty until typefaces arrive for later landing copy.
+  useFonts({
     Urbanist_600SemiBold,
     DMSans_400Regular,
     DMSans_500Medium,
@@ -25,14 +26,6 @@ export default function App() {
   const onIntroComplete = useCallback(() => {
     setShowLanding(true);
   }, []);
-
-  if (!fontsLoaded) {
-    return (
-      <View style={styles.loading}>
-        <ActivityIndicator color={LANDING.carrot} />
-      </View>
-    );
-  }
 
   return (
     <GestureHandlerRootView style={styles.root}>
@@ -53,11 +46,5 @@ const styles = StyleSheet.create({
   root: {
     flex: 1,
     backgroundColor: COLORS.desktopBackdrop,
-  },
-  loading: {
-    flex: 1,
-    alignItems: 'center',
-    justifyContent: 'center',
-    backgroundColor: LANDING.bg,
   },
 });
