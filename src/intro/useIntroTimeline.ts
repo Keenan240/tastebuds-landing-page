@@ -4,6 +4,7 @@ import {
   Easing,
   useSharedValue,
   withDelay,
+  withSequence,
   withSpring,
   withTiming,
 } from 'react-native-reanimated';
