@@ -38,10 +38,13 @@ export const DURATIONS = {
   /** Rest of pieces into the leveled bowl */
   restDrop: 580,
   restStagger: 85,
-  /** Hit timing as fraction of that piece's drop */
-  impactAt: 0.7,
-  /** Short beat after bowl levels before the rest cascade in */
-  holdAfterLevel: 120,
+  /**
+   * When the orange "hits" / bowl starts leveling, as a fraction of firstDrop.
+   * Earlier than visual settle so leveling reads with the contact, not after.
+   */
+  impactAt: 0.48,
+  /** Beat after level starts before the rest cascade in */
+  holdAfterLevel: 90,
   holdAfterFull: 260,
   collapse: 420,
   holdEmpty: 360,
@@ -54,7 +57,8 @@ export const DURATIONS = {
 
 export const SPRINGS = {
   drop: { damping: 15, stiffness: 170, mass: 0.85 },
-  bowlLevel: { damping: 15, stiffness: 180, mass: 0.8 },
+  /** Fast straighten on contact — no laggy pause after the hit */
+  bowlLevel: { damping: 14, stiffness: 280, mass: 0.55 },
   peek: { damping: 20, stiffness: 120, mass: 1 },
   launch: { damping: 14, stiffness: 190, mass: 0.8 },
 } as const;
