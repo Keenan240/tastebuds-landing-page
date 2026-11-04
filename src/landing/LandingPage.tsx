@@ -4,7 +4,6 @@ import {
   LayoutChangeEvent,
   NativeScrollEvent,
   NativeSyntheticEvent,
-  Pressable,
   ScrollView,
   StyleSheet,
   Text,
@@ -25,7 +24,6 @@ import { LANDING } from './tokens';
 
 const WORDMARK = require('../../assets/landing/wordmark.png');
 const BRUSH_STROKE = require('../../assets/landing/brush-stroke.png');
-const FOOTER_RULE = require('../../assets/landing/footer-rule.png');
 const CARD_KKATSU = require('../../assets/landing/card-kkatsu.png');
 const CARD_KIMCHI = require('../../assets/landing/card-kimchi.png');
 const CARD_PHO = require('../../assets/landing/card-pho.png');
@@ -44,11 +42,7 @@ const DANDAN_ASPECT = 2024 / 1604;
 
 const AnimatedScrollView = Animated.createAnimatedComponent(ScrollView);
 
-type Props = {
-  onReplayIntro?: () => void;
-};
-
-export function LandingPage({ onReplayIntro }: Props) {
+export function LandingPage() {
   const insets = useSafeAreaInsets();
   const chromeOpacity = useSharedValue(1);
   const chromeY = useSharedValue(0);
@@ -107,15 +101,6 @@ export function LandingPage({ onReplayIntro }: Props) {
                 resizeMode="contain"
                 accessibilityLabel="tastebuds"
               />
-              {onReplayIntro ? (
-                <Pressable
-                  onPress={onReplayIntro}
-                  style={styles.replay}
-                  hitSlop={8}
-                >
-                  <Text style={styles.replayLabel}>Replay</Text>
-                </Pressable>
-              ) : null}
             </FadeIn>
 
             <View style={styles.hero}>
@@ -237,23 +222,15 @@ export function LandingPage({ onReplayIntro }: Props) {
             </View>
 
             <FadeIn style={styles.footer}>
-              <View style={styles.footerBrand}>
-                <Image
-                  source={WORDMARK}
-                  style={styles.footerMark}
-                  resizeMode="contain"
-                />
-                <Image
-                  source={FOOTER_RULE}
-                  style={styles.footerRule}
-                  resizeMode="stretch"
-                  accessibilityElementsHidden
-                  importantForAccessibility="no"
-                />
-                <View style={styles.footerRow}>
-                  <Text style={styles.footerMeta}>© Tastebuds</Text>
-                  <Text style={styles.footerMeta}>Built by QTMA</Text>
-                </View>
+              <Image
+                source={WORDMARK}
+                style={styles.footerMark}
+                resizeMode="contain"
+              />
+              <View style={styles.footerRule} />
+              <View style={styles.footerRow}>
+                <Text style={styles.footerMeta}>© Tastebuds</Text>
+                <Text style={styles.footerMeta}>Built by QTMA</Text>
               </View>
             </FadeIn>
           </View>
@@ -286,20 +263,6 @@ const styles = StyleSheet.create({
   wordmark: {
     width: 168,
     height: 32,
-  },
-  replay: {
-    position: 'absolute',
-    right: 20,
-    top: 2,
-    paddingHorizontal: 10,
-    paddingVertical: 6,
-    borderRadius: 999,
-    backgroundColor: 'rgba(66, 28, 0, 0.06)',
-  },
-  replayLabel: {
-    color: LANDING.cocoa,
-    fontSize: 12,
-    fontFamily: 'DMSans_500Medium',
   },
   hero: {
     paddingHorizontal: 30,
@@ -412,28 +375,25 @@ const styles = StyleSheet.create({
     height: 360,
   },
   footer: {
-    paddingHorizontal: 28,
-    paddingTop: 40,
-    paddingBottom: 24,
-    alignItems: 'center',
-  },
-  footerBrand: {
-    width: 168,
-    alignItems: 'center',
-    gap: 12,
+    paddingTop: 56,
+    paddingBottom: 28,
+    alignItems: 'stretch',
+    gap: 28,
   },
   footerMark: {
     width: 168,
     height: 32,
+    alignSelf: 'center',
   },
   footerRule: {
-    width: 168,
-    height: 2,
+    alignSelf: 'stretch',
+    height: 1.5,
+    backgroundColor: LANDING.carrot,
   },
   footerRow: {
-    width: 168,
     flexDirection: 'row',
     justifyContent: 'space-between',
+    paddingHorizontal: 28,
   },
   footerMeta: {
     color: LANDING.carrot,

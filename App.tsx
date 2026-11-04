@@ -21,15 +21,9 @@ export default function App() {
     DMSans_500Medium,
   });
   const [showLanding, setShowLanding] = useState(false);
-  const [introKey, setIntroKey] = useState(0);
 
   const onIntroComplete = useCallback(() => {
     setShowLanding(true);
-  }, []);
-
-  const replayIntro = useCallback(() => {
-    setShowLanding(false);
-    setIntroKey((k) => k + 1);
   }, []);
 
   if (!fontsLoaded) {
@@ -45,9 +39,9 @@ export default function App() {
       <SafeAreaProvider>
         <PhoneFrame>
           {showLanding ? (
-            <LandingPage onReplayIntro={replayIntro} />
+            <LandingPage />
           ) : (
-            <IntroSequence key={introKey} onComplete={onIntroComplete} />
+            <IntroSequence onComplete={onIntroComplete} />
           )}
         </PhoneFrame>
       </SafeAreaProvider>
