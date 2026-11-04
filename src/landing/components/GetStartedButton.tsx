@@ -1,7 +1,16 @@
 import React from 'react';
-import { Pressable, StyleSheet, Text, View, ViewStyle } from 'react-native';
+import {
+  Image,
+  Pressable,
+  StyleSheet,
+  Text,
+  View,
+  ViewStyle,
+} from 'react-native';
 
 import { LANDING } from '../tokens';
+
+const ARROW_RIGHT = require('../../../assets/landing/arrow-right.png');
 
 type Props = {
   label?: string;
@@ -9,21 +18,6 @@ type Props = {
   style?: ViewStyle;
   onPress?: () => void;
 };
-
-/** Right-pointing arrow built from Views (reliable on RN web). */
-function ArrowRight({ color }: { color: string }) {
-  return (
-    <View style={styles.arrow} accessibilityElementsHidden>
-      <View style={[styles.arrowShaft, { backgroundColor: color }]} />
-      <View
-        style={[
-          styles.arrowHead,
-          { borderLeftColor: color },
-        ]}
-      />
-    </View>
-  );
-}
 
 export function GetStartedButton({
   label = 'Get Started',
@@ -46,7 +40,13 @@ export function GetStartedButton({
     >
       <View style={styles.content}>
         <Text style={styles.label}>{label}</Text>
-        <ArrowRight color={LANDING.bg} />
+        <Image
+          source={ARROW_RIGHT}
+          style={styles.arrow}
+          resizeMode="contain"
+          accessibilityElementsHidden
+          importantForAccessibility="no"
+        />
       </View>
     </Pressable>
   );
@@ -90,28 +90,7 @@ const styles = StyleSheet.create({
     fontFamily: 'Urbanist_600SemiBold',
   },
   arrow: {
-    width: 16,
-    height: 12,
-    justifyContent: 'center',
-  },
-  arrowShaft: {
-    position: 'absolute',
-    left: 0,
-    right: 5,
-    height: 2,
-    borderRadius: 1,
-    top: 5,
-  },
-  arrowHead: {
-    position: 'absolute',
-    right: 0,
-    top: 1,
-    width: 0,
-    height: 0,
-    borderTopWidth: 5,
-    borderBottomWidth: 5,
-    borderLeftWidth: 7,
-    borderTopColor: 'transparent',
-    borderBottomColor: 'transparent',
+    width: 18,
+    height: 18,
   },
 });

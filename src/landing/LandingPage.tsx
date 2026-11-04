@@ -274,6 +274,8 @@ const styles = StyleSheet.create({
     alignSelf: 'stretch',
   },
   wordmarkWrap: {
+    width: '100%',
+    alignSelf: 'stretch',
     alignItems: 'center',
     justifyContent: 'center',
     minHeight: 44,
@@ -283,6 +285,7 @@ const styles = StyleSheet.create({
   wordmark: {
     width: 168,
     height: 32,
+    alignSelf: 'center',
   },
   hero: {
     paddingHorizontal: 30,
