@@ -13,15 +13,15 @@ Open [http://127.0.0.1:43123](http://127.0.0.1:43123). On a wide desktop window 
 
 ## Flow
 
-1. **Intro** — food drops, bowl physics, smile peeks and launches to the top  
-2. **Landing** — blurred “you hungry…” backdrop, hero CTA, feature sections, footer  
+1. **Intro** — food drops, soft filled-bowl shake, smile peeks/launches, logo dissolves  
+2. **Landing** — wordmark, hero, dish carousel, match card, logs graphic, sticky search  
 
-Use **Replay intro** on the landing page to re-run Part 1.
+Each landing component fades in on its own at the same time (not a whole-page fade). Use **Replay** to re-run Part 1.
 
 ## Tunables
 
 - Intro motion: [`src/intro/phases.ts`](src/intro/phases.ts)  
-- Landing tokens: [`src/landing/tokens.ts`](src/landing/tokens.ts)
+- Landing tokens / entrance: [`src/landing/tokens.ts`](src/landing/tokens.ts)
 
 ## Stack
 

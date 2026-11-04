@@ -12,16 +12,12 @@ export const LANDING = {
   pistachio: '#BFD3AA',
   black: '#323232',
   chipBg: '#FFFEF8',
-  chipMuted: '#F7E4CF',
-  chipOutline: '#DED4BA',
   peachBand: '#F7E4CF',
   buttonBorder: '#CCC1A0',
+  openGreen: '#6B705C',
 } as const;
 
-export const HUNGRY_BACKDROP = {
-  lines: ['you hungryyyyyyyy', 'yyyyyyyyyyyyyy', 'yyyyyyyyyyyy?'] as const,
-  color: '#F0E9CF',
-  fontSize: 62,
-  lineHeight: 68,
-  blur: 14,
+/** Simultaneous per-component entrance (not a whole-page fade). */
+export const ENTRANCE = {
+  duration: 560,
 } as const;

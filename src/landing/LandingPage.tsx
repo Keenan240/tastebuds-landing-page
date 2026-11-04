@@ -1,5 +1,6 @@
 import React from 'react';
 import {
+  Image,
   Pressable,
   ScrollView,
   StyleSheet,
@@ -11,14 +12,22 @@ import Svg, { Path } from 'react-native-svg';
 import { useSharedValue } from 'react-native-reanimated';
 
 import { LandingChrome } from '../intro/components/LandingChrome';
-import { BrandWordmark } from './components/BrandWordmark';
-import { DishMatchCard } from './components/DishMatchCard';
+import { FadeIn } from './components/FadeIn';
 import { GetStartedButton } from './components/GetStartedButton';
-import { HungryBackdrop } from './components/HungryBackdrop';
-import { LogFeedbackCard } from './components/LogFeedbackCard';
-import { OrangeWaves } from './components/OrangeWaves';
-import { TasteQuizCard } from './components/TasteQuizCard';
 import { LANDING } from './tokens';
+
+const WORDMARK = require('../../assets/landing/wordmark.png');
+const CARD_KKATSU = require('../../assets/landing/card-kkatsu.png');
+const CARD_KIMCHI = require('../../assets/landing/card-kimchi.png');
+const CARD_PHO = require('../../assets/landing/card-pho.png');
+const CARD_DANDAN = require('../../assets/landing/card-dandan.png');
+const LOG_FEEDBACK = require('../../assets/landing/log-feedback.png');
+
+const DISH_CARDS = [
+  { source: CARD_KKATSU, aspect: 668 / 662, width: 236 },
+  { source: CARD_KIMCHI, aspect: 668 / 662, width: 236 },
+  { source: CARD_PHO, aspect: 266 / 662, width: 112 },
+] as const;
 
 type Props = {
   onReplayIntro?: () => void;
@@ -36,119 +45,160 @@ export function LandingPage({ onReplayIntro }: Props) {
         contentContainerStyle={[
           styles.content,
           {
-            paddingTop: insets.top + 16,
-            paddingBottom: insets.bottom + 110,
+            paddingTop: insets.top + 18,
+            paddingBottom: insets.bottom + 120,
           },
         ]}
         showsVerticalScrollIndicator={false}
       >
-        {/* Hero */}
-        <View style={styles.hero}>
-          <HungryBackdrop />
-          <View style={styles.heroTop}>
-            <BrandWordmark size="hero" />
-            {onReplayIntro ? (
-              <Pressable
-                onPress={onReplayIntro}
-                style={styles.replay}
-                hitSlop={8}
-              >
-                <Text style={styles.replayLabel}>Replay</Text>
-              </Pressable>
-            ) : null}
-          </View>
+        <FadeIn style={styles.wordmarkWrap}>
+          <Image
+            source={WORDMARK}
+            style={styles.wordmark}
+            resizeMode="contain"
+            accessibilityLabel="tastebuds"
+          />
+          {onReplayIntro ? (
+            <Pressable
+              onPress={onReplayIntro}
+              style={styles.replay}
+              hitSlop={8}
+            >
+              <Text style={styles.replayLabel}>Replay</Text>
+            </Pressable>
+          ) : null}
+        </FadeIn>
 
-          <View style={styles.heroCopy}>
-            <View style={styles.titleWrap}>
-              <View style={styles.titleRow}>
-                <View style={styles.letsBlock}>
-                  <Text style={styles.heroTitle}>Let’s</Text>
-                  <Svg
-                    width={72}
-                    height={14}
-                    viewBox="0 0 72 14"
-                    style={styles.squiggle}
-                  >
-                    <Path
-                      d="M2 9 C 14 2, 26 12, 36 6 S 56 2, 70 10"
-                      stroke={LANDING.pistachio}
-                      strokeWidth={8}
-                      strokeLinecap="round"
-                      fill="none"
-                    />
-                  </Svg>
-                </View>
-                <Text style={styles.heroTitle}> Fix That!</Text>
-              </View>
+        <View style={styles.hero}>
+          <FadeIn style={styles.titleWrap}>
+            <Text style={styles.heroTitle}>Hungry?</Text>
+            <View style={styles.fixLine}>
+              <Text style={styles.heroTitle}>Let’s Fix That!</Text>
+              <Svg
+                width={210}
+                height={16}
+                viewBox="0 0 210 16"
+                style={styles.squiggle}
+              >
+                <Path
+                  d="M4 11 C 36 2, 72 14, 108 7 S 168 2, 206 10"
+                  stroke={LANDING.pistachio}
+                  strokeWidth={9}
+                  strokeLinecap="round"
+                  fill="none"
+                />
+              </Svg>
             </View>
+          </FadeIn>
+
+          <FadeIn>
             <Text style={styles.heroBody}>
               Tastebuds is a personalized food discovery that matches you with
               dishes you’ll love!
             </Text>
+          </FadeIn>
+
+          <FadeIn style={styles.heroBtnWrap}>
             <GetStartedButton style={styles.heroBtn} />
-          </View>
+          </FadeIn>
         </View>
 
-        {/* Taste is personal */}
         <View style={styles.section}>
-          <Text style={styles.sectionTitle}>
-            Your taste is personal.{'\n'}Your picks should be, too.
-          </Text>
-          <Text style={styles.sectionBody}>
-            Tastebuds understands your taste profile and shows you suggestions
-            curated to what you like.
-          </Text>
-          <TasteQuizCard />
+          <FadeIn>
+            <Text style={styles.sectionTitle}>
+              Your taste is personal.{'\n'}Your picks should be, too.
+            </Text>
+          </FadeIn>
+          <FadeIn>
+            <Text style={styles.sectionBody}>
+              Tastebuds understands your taste profile and shows you suggestions
+              curated to what you like.
+            </Text>
+          </FadeIn>
         </View>
 
-        {/* Discover */}
-        <View style={styles.discoverBlock}>
-          <View style={styles.sectionTight}>
+        <ScrollView
+          horizontal
+          showsHorizontalScrollIndicator={false}
+          contentContainerStyle={styles.carousel}
+          decelerationRate="fast"
+        >
+          {DISH_CARDS.map((card, i) => (
+            <FadeIn key={i}>
+              <Image
+                source={card.source}
+                style={{
+                  width: card.width,
+                  height: card.width / card.aspect,
+                  marginRight: i === DISH_CARDS.length - 1 ? 0 : 14,
+                }}
+                resizeMode="contain"
+              />
+            </FadeIn>
+          ))}
+        </ScrollView>
+
+        <View style={styles.section}>
+          <FadeIn>
             <Text style={styles.sectionTitle}>
               Discover new dishes with confidence
             </Text>
+          </FadeIn>
+          <FadeIn>
             <Text style={styles.sectionBody}>
               We use your taste profile to show you why a dish is perfect or
               maybe not for you.
             </Text>
-          </View>
-          <View style={styles.waveStage}>
-            <OrangeWaves />
-            <DishMatchCard />
-          </View>
+          </FadeIn>
         </View>
 
-        {/* Logs */}
-        <View style={[styles.section, styles.sectionTopGap]}>
-          <Text style={styles.sectionTitle}>We learn from your logs!</Text>
-          <Text style={styles.sectionBody}>
-            After finishing a dish you can log what you ate and we’ll take that
-            information to give you even better recommendations.
-          </Text>
-          <LogFeedbackCard />
+        <FadeIn style={styles.dandanWrap}>
+          <Image
+            source={CARD_DANDAN}
+            style={styles.dandan}
+            resizeMode="contain"
+            accessibilityLabel="Dandan noodles match card"
+          />
+        </FadeIn>
+
+        <View style={styles.section}>
+          <FadeIn>
+            <Text style={styles.sectionTitle}>We learn from your logs!</Text>
+          </FadeIn>
+          <FadeIn>
+            <Text style={styles.sectionBody}>
+              After finishing a dish you can log what you ate and we’ll take
+              that information to give you even better recommendations.
+            </Text>
+          </FadeIn>
         </View>
 
-        {/* Bottom CTA */}
-        <View style={styles.ctaBand}>
-          <Text style={styles.ctaTitle}>
-            Your next favourite{'\n'}is out there.
-          </Text>
-          <GetStartedButton variant="cocoa" />
-        </View>
+        <FadeIn style={styles.logWrap}>
+          <Image
+            source={LOG_FEEDBACK}
+            style={styles.logImage}
+            resizeMode="contain"
+            accessibilityLabel="Meal log feedback"
+          />
+        </FadeIn>
 
-        {/* Footer */}
-        <View style={styles.footer}>
-          <BrandWordmark size="footer" />
-          <View style={styles.footerRule}>
-            <View style={styles.footerRow}>
-              <Text style={styles.footerMeta}>© Tastebuds</Text>
-              <Text style={styles.footerMeta}>Built by QTMA</Text>
-            </View>
+        <FadeIn style={styles.footer}>
+          <Image
+            source={WORDMARK}
+            style={styles.footerMark}
+            resizeMode="contain"
+          />
+          <View style={styles.footerRule} />
+          <View style={styles.footerRow}>
+            <Text style={styles.footerMeta}>© Tastebuds</Text>
+            <Text style={styles.footerMeta}>Built by QTMA</Text>
           </View>
-        </View>
+        </FadeIn>
       </ScrollView>
 
-      <LandingChrome opacity={chromeOpacity} translateY={chromeY} />
+      <FadeIn style={styles.chromeFade} pointerEvents="box-none">
+        <LandingChrome opacity={chromeOpacity} translateY={chromeY} />
+      </FadeIn>
     </View>
   );
 }
@@ -162,23 +212,21 @@ const styles = StyleSheet.create({
   content: {
     backgroundColor: LANDING.bg,
   },
-  hero: {
-    minHeight: 380,
-    paddingHorizontal: 30,
-    paddingBottom: 28,
-    overflow: 'hidden',
-  },
-  heroTop: {
-    zIndex: 2,
+  wordmarkWrap: {
     alignItems: 'center',
     justifyContent: 'center',
-    marginBottom: 56,
-    minHeight: 40,
+    minHeight: 44,
+    marginBottom: 28,
+    paddingHorizontal: 30,
+  },
+  wordmark: {
+    width: 168,
+    height: 32,
   },
   replay: {
     position: 'absolute',
-    right: 0,
-    top: 4,
+    right: 20,
+    top: 2,
     paddingHorizontal: 10,
     paddingVertical: 6,
     borderRadius: 999,
@@ -189,30 +237,27 @@ const styles = StyleSheet.create({
     fontSize: 12,
     fontFamily: 'DMSans_500Medium',
   },
-  heroCopy: {
-    zIndex: 2,
+  hero: {
+    paddingHorizontal: 30,
     alignItems: 'center',
     gap: 14,
+    marginBottom: 36,
   },
   titleWrap: {
     alignItems: 'center',
-    alignSelf: 'center',
   },
-  titleRow: {
-    flexDirection: 'row',
-    alignItems: 'flex-start',
-  },
-  letsBlock: {
+  fixLine: {
     alignItems: 'center',
   },
   heroTitle: {
     color: LANDING.cocoa,
     fontSize: 32,
+    lineHeight: 38,
     fontFamily: 'Urbanist_600SemiBold',
     textAlign: 'center',
   },
   squiggle: {
-    marginTop: -6,
+    marginTop: -8,
   },
   heroBody: {
     color: LANDING.grey,
@@ -222,26 +267,18 @@ const styles = StyleSheet.create({
     fontFamily: 'DMSans_500Medium',
     maxWidth: 331,
   },
+  heroBtnWrap: {
+    marginTop: 6,
+  },
   heroBtn: {
-    marginTop: 8,
     minWidth: 220,
   },
   section: {
     paddingHorizontal: 30,
-    paddingTop: 48,
-    paddingBottom: 28,
+    paddingTop: 28,
+    paddingBottom: 12,
     alignItems: 'center',
     gap: 12,
-  },
-  sectionTight: {
-    paddingHorizontal: 30,
-    paddingTop: 8,
-    paddingBottom: 8,
-    alignItems: 'center',
-    gap: 12,
-  },
-  sectionTopGap: {
-    paddingTop: 56,
   },
   sectionTitle: {
     color: LANDING.cocoa,
@@ -257,47 +294,50 @@ const styles = StyleSheet.create({
     textAlign: 'center',
     fontFamily: 'DMSans_500Medium',
     maxWidth: 331,
-    marginBottom: 8,
   },
-  discoverBlock: {
-    paddingTop: 40,
+  carousel: {
+    paddingHorizontal: 24,
+    paddingVertical: 8,
+    alignItems: 'flex-start',
   },
-  waveStage: {
+  dandanWrap: {
+    width: '100%',
     marginTop: 8,
-    minHeight: 520,
-    justifyContent: 'center',
-    backgroundColor: LANDING.peachBand,
     overflow: 'hidden',
-    paddingVertical: 36,
   },
-  ctaBand: {
-    marginTop: 48,
-    backgroundColor: LANDING.carrot,
-    paddingVertical: 40,
-    paddingHorizontal: 48,
+  dandan: {
+    // RN Web often ignores aspectRatio on Image — pin height from asset ratio.
+    width: '100%',
+    height: 468,
+  },
+  logWrap: {
+    width: '100%',
+    paddingHorizontal: 12,
+    marginTop: 8,
     alignItems: 'center',
-    gap: 24,
   },
-  ctaTitle: {
-    color: LANDING.cream,
-    fontSize: 32,
-    lineHeight: 36,
-    textAlign: 'center',
-    fontFamily: 'Urbanist_600SemiBold',
-    maxWidth: 280,
+  logImage: {
+    width: '100%',
+    height: 360,
   },
   footer: {
     paddingHorizontal: 28,
     paddingTop: 40,
-    paddingBottom: 24,
-    gap: 20,
+    paddingBottom: 16,
+    gap: 18,
+    alignItems: 'center',
+  },
+  footerMark: {
+    width: 140,
+    height: 28,
   },
   footerRule: {
+    alignSelf: 'stretch',
     borderTopWidth: 1,
     borderTopColor: LANDING.carrot,
-    paddingTop: 20,
   },
   footerRow: {
+    alignSelf: 'stretch',
     flexDirection: 'row',
     justifyContent: 'space-between',
   },
@@ -305,5 +345,8 @@ const styles = StyleSheet.create({
     color: LANDING.carrot,
     fontSize: 12,
     fontFamily: 'DMSans_400Regular',
+  },
+  chromeFade: {
+    ...StyleSheet.absoluteFill,
   },
 });
