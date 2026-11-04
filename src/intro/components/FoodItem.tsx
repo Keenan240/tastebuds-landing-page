@@ -69,17 +69,16 @@ export function FoodItem({
       Extrapolation.CLAMP,
     );
 
-    const x = interpolate(collapse.value, [0, 1], [landedX, 0]);
-    const y = interpolate(collapse.value, [0, 1], [landedY, 28]);
-    const scale = interpolate(collapse.value, [0, 1], [landedScale, 0.18]);
-    const rot = interpolate(collapse.value, [0, 1], [landedRot, 0]);
+    // Collapse = drop straight down into the bowl (keep X), not suck to center
+    const y = interpolate(collapse.value, [0, 1], [landedY, landedY + 56]);
+    const scale = interpolate(collapse.value, [0, 1], [landedScale, landedScale * 0.88]);
 
     return {
       opacity: opacity.value,
       transform: [
-        { translateX: x },
+        { translateX: landedX },
         { translateY: y + bowlTranslateY.value },
-        { rotate: `${rot}deg` },
+        { rotate: `${landedRot}deg` },
         { scale },
       ],
     };
