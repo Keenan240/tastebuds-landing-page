@@ -57,8 +57,10 @@ export const DURATIONS = {
 
 export const SPRINGS = {
   drop: { damping: 15, stiffness: 170, mass: 0.85 },
-  /** Fast straighten on contact — no laggy pause after the hit */
-  bowlLevel: { damping: 14, stiffness: 280, mass: 0.55 },
+  /** Very fast straighten on orange contact */
+  bowlLevel: { damping: 12, stiffness: 380, mass: 0.4 },
+  /** Slightly softer drop for the fill pieces */
+  restDrop: { damping: 16, stiffness: 130, mass: 1 },
   peek: { damping: 20, stiffness: 120, mass: 1 },
   launch: { damping: 14, stiffness: 190, mass: 0.8 },
 } as const;
