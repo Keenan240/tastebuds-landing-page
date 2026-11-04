@@ -421,8 +421,9 @@ const styles = StyleSheet.create({
     alignSelf: 'center',
   },
   footerRule: {
-    height: 1,
-    backgroundColor: LANDING.carrot,
+    alignSelf: 'stretch',
+    borderTopWidth: 1,
+    borderTopColor: LANDING.carrot,
   },
   footerRow: {
     flexDirection: 'row',
