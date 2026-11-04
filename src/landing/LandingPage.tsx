@@ -157,8 +157,8 @@ export function LandingPage() {
                 decelerationRate="fast"
               >
                 <View style={styles.carouselRow}>
-                  {DISH_ASSETS.map((card, i) => (
-                    <FadeIn key={i}>
+                  {DISH_ASSETS.map((card, i) => {
+                    const cardView = (
                       <View
                         style={[
                           styles.carouselCard,
@@ -171,8 +171,13 @@ export function LandingPage() {
                           resizeMode="cover"
                         />
                       </View>
-                    </FadeIn>
-                  ))}
+                    );
+                    // Third card stays static — no scroll reveal
+                    if (i === 2) {
+                      return <View key={i}>{cardView}</View>;
+                    }
+                    return <FadeIn key={i}>{cardView}</FadeIn>;
+                  })}
                 </View>
               </ScrollView>
             </View>
