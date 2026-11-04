@@ -62,7 +62,7 @@ export const DURATIONS = {
   /** Pause while the logo is peeked before launch */
   holdAfterPeek: 260,
   launch: 420,
-  /** Logo dissolves at the top before landing handoff */
+  /** Logo fades out + settles slightly down before landing handoff */
   logoFade: 420,
   /** One half-swing of the filled-bowl rumble */
   shakeTick: 48,

@@ -72,6 +72,7 @@ export function IntroSequence({ onComplete }: Props) {
             opacity={timeline.logoOpacity}
             peek={timeline.logoPeek}
             launch={timeline.logoLaunch}
+            fadeDown={timeline.logoFadeDown}
             launchTravel={launchTravel}
           />
 

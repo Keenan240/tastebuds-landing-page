@@ -55,6 +55,8 @@ export function useIntroTimeline(onComplete?: () => void) {
   const logoPeek = useSharedValue(0);
   const logoLaunch = useSharedValue(0);
   const logoOpacity = useSharedValue(0);
+  /** 0→1 during dissolve; drives a slight downward settle */
+  const logoFadeDown = useSharedValue(0);
 
   const markPhase = useCallback((label: string) => {
     setPhaseLabel(label);
@@ -77,6 +79,7 @@ export function useIntroTimeline(onComplete?: () => void) {
     cancelAnimation(logoPeek);
     cancelAnimation(logoLaunch);
     cancelAnimation(logoOpacity);
+    cancelAnimation(logoFadeDown);
 
     bowlRotate.value = BOWL_START_TILT;
     bowlTranslateY.value = 0;
@@ -89,6 +92,7 @@ export function useIntroTimeline(onComplete?: () => void) {
     logoPeek.value = 0;
     logoLaunch.value = 0;
     logoOpacity.value = 0;
+    logoFadeDown.value = 0;
     setPhaseLabel('idle');
   }, [
     bowlOpacity,
@@ -96,6 +100,7 @@ export function useIntroTimeline(onComplete?: () => void) {
     bowlTranslateY,
     foodCollapse,
     foods,
+    logoFadeDown,
     logoLaunch,
     logoOpacity,
     logoPeek,
@@ -228,7 +233,12 @@ export function useIntroTimeline(onComplete?: () => void) {
 
     later(afterLaunch, () => {
       markPhase('logo-fade');
+      // Reverse of the landing rise-fade: dissolve while easing slightly down
       logoOpacity.value = withTiming(0, {
+        duration: DURATIONS.logoFade,
+        easing: Easing.out(Easing.cubic),
+      });
+      logoFadeDown.value = withTiming(1, {
         duration: DURATIONS.logoFade,
         easing: Easing.out(Easing.cubic),
       });
@@ -255,5 +265,6 @@ export function useIntroTimeline(onComplete?: () => void) {
     logoPeek,
     logoLaunch,
     logoOpacity,
+    logoFadeDown,
   };
 }

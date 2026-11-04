@@ -14,17 +14,23 @@ type Props = {
   opacity: SharedValue<number>;
   peek: SharedValue<number>;
   launch: SharedValue<number>;
+  fadeDown: SharedValue<number>;
   launchTravel: number;
 };
+
+/** px the smile settles downward while dissolving */
+const FADE_DOWN_PX = 16;
 
 /**
  * Lives behind the bowl. Opacity gates visibility; peek is pure translateY
  * from buried under the rim to a small crest above it, then launch flies up.
+ * Dissolve fades out while easing slightly downward.
  */
 export function SmileLogo({
   opacity,
   peek,
   launch,
+  fadeDown,
   launchTravel,
 }: Props) {
   const base = LAYOUT.logoPeekSize;
@@ -43,13 +49,19 @@ export function SmileLogo({
     const peekY = -height * 0.16;
     const riseY = interpolate(peek.value, [0, 1], [buriedY, peekY]);
     const flyY = interpolate(launch.value, [0, 1], [0, -launchTravel]);
+    const settleY = interpolate(
+      fadeDown.value,
+      [0, 1],
+      [0, FADE_DOWN_PX],
+      Extrapolation.CLAMP,
+    );
 
     return {
       opacity: opacity.value,
       left: (LAYOUT.bowlWidth - base) / 2,
       bottom: LAYOUT.bowlHeight - height * 0.5,
       transform: [
-        { translateY: riseY + flyY },
+        { translateY: riseY + flyY + settleY },
         { scale: size / base },
       ],
     };
