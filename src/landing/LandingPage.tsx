@@ -122,15 +122,14 @@ export function LandingPage({ onReplayIntro }: Props) {
                 <Text style={styles.heroTitle}>Hungry?</Text>
                 <View style={styles.fixLine}>
                   <Text style={styles.heroTitle}>Let’s Fix That!</Text>
-                  <View style={styles.brushWrap} pointerEvents="none">
-                    <Image
-                      source={BRUSH_STROKE}
-                      style={styles.brush}
-                      resizeMode="contain"
-                      accessibilityElementsHidden
-                      importantForAccessibility="no"
-                    />
-                  </View>
+                  <Image
+                    source={BRUSH_STROKE}
+                    style={styles.brush}
+                    resizeMode="contain"
+                    pointerEvents="none"
+                    accessibilityElementsHidden
+                    importantForAccessibility="no"
+                  />
                 </View>
               </FadeIn>
 
@@ -312,17 +311,12 @@ const styles = StyleSheet.create({
     fontFamily: 'Urbanist_600SemiBold',
     textAlign: 'center',
   },
-  brushWrap: {
-    marginTop: -4,
-    alignItems: 'center',
-    justifyContent: 'center',
-    width: 220,
-    height: 36,
-    transform: [{ rotate: '-13deg' }],
-  },
   brush: {
-    width: 210,
+    width: 208,
     height: 24,
+    marginTop: -2,
+    alignSelf: 'center',
+    transform: [{ rotate: '-13deg' }],
   },
   heroBody: {
     color: LANDING.grey,
