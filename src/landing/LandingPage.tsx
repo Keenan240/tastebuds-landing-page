@@ -312,9 +312,9 @@ const styles = StyleSheet.create({
     textAlign: 'center',
   },
   brush: {
-    width: 208,
-    height: 24,
-    marginTop: -2,
+    width: 228,
+    height: 34,
+    marginTop: -6,
     alignSelf: 'center',
     transform: [{ rotate: '-13deg' }],
   },
