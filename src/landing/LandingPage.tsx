@@ -93,7 +93,11 @@ export function LandingPage() {
           // @ts-expect-error RN web sometimes needs the JS path too
           onScrollEvent={onScrollFallback}
         >
-          <View ref={contentRef as never} collapsable={false}>
+          <View
+            ref={contentRef as never}
+            collapsable={false}
+            style={styles.scrollInner}
+          >
             <FadeIn eager index={0} style={styles.wordmarkWrap}>
               <Image
                 source={WORDMARK}
@@ -228,7 +232,12 @@ export function LandingPage() {
                   style={styles.footerMark}
                   resizeMode="contain"
                 />
-                <View style={styles.footerRule} />
+                <View
+                  style={[
+                    styles.footerRule,
+                    pageW > 0 ? { width: pageW } : null,
+                  ]}
+                />
                 <View style={styles.footerRow}>
                   <Text style={styles.footerMeta}>© Tastebuds</Text>
                   <Text style={styles.footerMeta}>Built by QTMA</Text>
@@ -254,6 +263,10 @@ const styles = StyleSheet.create({
   scroll: { flex: 1 },
   content: {
     backgroundColor: LANDING.bg,
+  },
+  scrollInner: {
+    width: '100%',
+    alignSelf: 'stretch',
   },
   wordmarkWrap: {
     alignItems: 'center',
@@ -382,26 +395,25 @@ const styles = StyleSheet.create({
   },
   footer: {
     width: '100%',
-    paddingTop: 64,
-    paddingBottom: 32,
-    alignItems: 'stretch',
-    gap: 32,
+    paddingTop: 72,
+    paddingBottom: 36,
+    alignItems: 'center',
+    gap: 36,
   },
   footerMark: {
     width: 168,
     height: 32,
-    alignSelf: 'center',
   },
   footerRule: {
-    width: '100%',
-    height: 1.5,
+    alignSelf: 'stretch',
+    height: 2,
     backgroundColor: LANDING.carrot,
   },
   footerRow: {
-    width: '100%',
+    alignSelf: 'stretch',
     flexDirection: 'row',
     justifyContent: 'space-between',
-    paddingHorizontal: 28,
+    paddingHorizontal: 16,
   },
   footerMeta: {
     color: LANDING.carrot,
