@@ -230,25 +230,23 @@ export function LandingPage() {
               />
             </View>
 
-            <FadeIn style={styles.footerFade}>
-              <View style={styles.footer}>
-                <Image
-                  source={WORDMARK}
-                  style={styles.footerMark}
-                  resizeMode="contain"
-                />
-                <View
-                  style={[
-                    styles.footerRule,
-                    pageW > 0 ? { width: pageW } : null,
-                  ]}
-                />
-                <View style={styles.footerRow}>
-                  <Text style={styles.footerMeta}>© Tastebuds</Text>
-                  <Text style={styles.footerMeta}>Built by QTMA</Text>
-                </View>
+            <View style={styles.footer}>
+              <Image
+                source={WORDMARK}
+                style={styles.footerMark}
+                resizeMode="contain"
+              />
+              <View
+                style={[
+                  styles.footerRule,
+                  pageW > 0 ? { width: pageW } : null,
+                ]}
+              />
+              <View style={styles.footerRow}>
+                <Text style={styles.footerMeta}>© Tastebuds</Text>
+                <Text style={styles.footerMeta}>Built by QTMA</Text>
               </View>
-            </FadeIn>
+            </View>
           </View>
         </AnimatedScrollView>
 
@@ -397,11 +395,8 @@ const styles = StyleSheet.create({
     width: '100%',
     height: 360,
   },
-  footerFade: {
-    alignSelf: 'stretch',
-    width: '100%',
-  },
   footer: {
+    alignSelf: 'stretch',
     width: '100%',
     paddingTop: 72,
     paddingBottom: 36,
