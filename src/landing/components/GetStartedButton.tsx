@@ -1,5 +1,6 @@
 import React from 'react';
-import { Pressable, StyleSheet, Text, ViewStyle } from 'react-native';
+import { Pressable, StyleSheet, Text, View, ViewStyle } from 'react-native';
+import Svg, { Path } from 'react-native-svg';
 
 import { LANDING } from '../tokens';
 
@@ -9,6 +10,21 @@ type Props = {
   style?: ViewStyle;
   onPress?: () => void;
 };
+
+function ArrowRight({ color }: { color: string }) {
+  return (
+    <Svg width={18} height={18} viewBox="0 0 18 18" accessibilityElementsHidden>
+      <Path
+        d="M3.5 9h10M9.5 4.5 14 9l-4.5 4.5"
+        stroke={color}
+        strokeWidth={2}
+        strokeLinecap="round"
+        strokeLinejoin="round"
+        fill="none"
+      />
+    </Svg>
+  );
+}
 
 export function GetStartedButton({
   label = 'Get Started',
@@ -29,7 +45,10 @@ export function GetStartedButton({
       accessibilityRole="button"
       accessibilityLabel={label}
     >
-      <Text style={styles.label}>{label}</Text>
+      <View style={styles.content}>
+        <Text style={styles.label}>{label}</Text>
+        <ArrowRight color={LANDING.bg} />
+      </View>
     </Pressable>
   );
 }
@@ -38,7 +57,7 @@ const styles = StyleSheet.create({
   btn: {
     minHeight: 52,
     paddingVertical: 14,
-    paddingHorizontal: 52,
+    paddingHorizontal: 40,
     borderRadius: 16,
     alignItems: 'center',
     justifyContent: 'center',
@@ -48,6 +67,11 @@ const styles = StyleSheet.create({
     shadowOpacity: 1,
     shadowRadius: 0,
     elevation: 3,
+  },
+  content: {
+    flexDirection: 'row',
+    alignItems: 'center',
+    gap: 10,
   },
   carrot: {
     backgroundColor: LANDING.carrot,

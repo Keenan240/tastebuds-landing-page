@@ -236,15 +236,17 @@ export function LandingPage({ onReplayIntro }: Props) {
             </View>
 
             <FadeIn style={styles.footer}>
-              <Image
-                source={WORDMARK}
-                style={styles.footerMark}
-                resizeMode="contain"
-              />
-              <View style={styles.footerRule} />
-              <View style={styles.footerRow}>
-                <Text style={styles.footerMeta}>© Tastebuds</Text>
-                <Text style={styles.footerMeta}>Built by QTMA</Text>
+              <View style={styles.footerBrand}>
+                <Image
+                  source={WORDMARK}
+                  style={styles.footerMark}
+                  resizeMode="contain"
+                />
+                <View style={styles.footerRule} />
+                <View style={styles.footerRow}>
+                  <Text style={styles.footerMeta}>© Tastebuds</Text>
+                  <Text style={styles.footerMeta}>Built by QTMA</Text>
+                </View>
               </View>
             </FadeIn>
           </View>
@@ -312,11 +314,11 @@ const styles = StyleSheet.create({
     textAlign: 'center',
   },
   brush: {
-    width: 228,
-    height: 34,
-    marginTop: -6,
+    width: 210,
+    height: 22,
+    marginTop: -4,
     alignSelf: 'center',
-    transform: [{ rotate: '-13deg' }],
+    transform: [{ rotate: '3deg' }],
   },
   heroBody: {
     color: LANDING.grey,
@@ -404,22 +406,25 @@ const styles = StyleSheet.create({
   },
   footer: {
     paddingHorizontal: 28,
-    paddingTop: 20,
-    paddingBottom: 16,
-    gap: 14,
+    paddingTop: 40,
+    paddingBottom: 24,
     alignItems: 'center',
   },
+  footerBrand: {
+    width: 168,
+    alignItems: 'stretch',
+    gap: 14,
+  },
   footerMark: {
-    width: 140,
-    height: 28,
+    width: 168,
+    height: 32,
+    alignSelf: 'center',
   },
   footerRule: {
-    alignSelf: 'stretch',
-    borderTopWidth: 1,
-    borderTopColor: LANDING.carrot,
+    height: 1,
+    backgroundColor: LANDING.carrot,
   },
   footerRow: {
-    alignSelf: 'stretch',
     flexDirection: 'row',
     justifyContent: 'space-between',
   },
