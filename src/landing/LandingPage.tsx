@@ -103,7 +103,7 @@ export function LandingPage({ onReplayIntro }: Props) {
           </FadeIn>
         </View>
 
-        <View style={styles.section}>
+        <View style={[styles.section, styles.sectionAfterHero]}>
           <FadeIn>
             <Text style={styles.sectionTitle}>
               Your taste is personal.{'\n'}Your picks should be, too.
@@ -117,26 +117,30 @@ export function LandingPage({ onReplayIntro }: Props) {
           </FadeIn>
         </View>
 
-        <ScrollView
-          horizontal
-          showsHorizontalScrollIndicator={false}
-          contentContainerStyle={styles.carousel}
-          decelerationRate="fast"
-        >
-          {DISH_CARDS.map((card, i) => (
-            <FadeIn key={i}>
-              <Image
-                source={card.source}
-                style={{
-                  width: card.width,
-                  height: card.width / card.aspect,
-                  marginRight: i === DISH_CARDS.length - 1 ? 0 : 14,
-                }}
-                resizeMode="contain"
-              />
-            </FadeIn>
-          ))}
-        </ScrollView>
+        <FadeIn>
+          <ScrollView
+            horizontal
+            showsHorizontalScrollIndicator={false}
+            contentContainerStyle={styles.carousel}
+            decelerationRate="fast"
+          >
+            <View style={styles.carouselRow}>
+              {DISH_CARDS.map((card, i) => (
+                <Image
+                  key={i}
+                  source={card.source}
+                  style={{
+                    width: card.width,
+                    height: card.width / card.aspect,
+                  }}
+                  resizeMode="contain"
+                />
+              ))}
+              {/* Trailing spacer so the last card can fully enter the viewport */}
+              <View style={styles.carouselEndPad} />
+            </View>
+          </ScrollView>
+        </FadeIn>
 
         <View style={styles.section}>
           <FadeIn>
@@ -216,7 +220,8 @@ const styles = StyleSheet.create({
     alignItems: 'center',
     justifyContent: 'center',
     minHeight: 44,
-    marginBottom: 28,
+    // Figma: ~120px from logo bottom to hero headline
+    marginBottom: 120,
     paddingHorizontal: 30,
   },
   wordmark: {
@@ -241,7 +246,8 @@ const styles = StyleSheet.create({
     paddingHorizontal: 30,
     alignItems: 'center',
     gap: 14,
-    marginBottom: 36,
+    // Figma: ~164px from hero CTA to the next section
+    marginBottom: 164,
   },
   titleWrap: {
     alignItems: 'center',
@@ -275,10 +281,14 @@ const styles = StyleSheet.create({
   },
   section: {
     paddingHorizontal: 30,
-    paddingTop: 28,
-    paddingBottom: 12,
+    paddingTop: 12,
+    paddingBottom: 4,
     alignItems: 'center',
-    gap: 12,
+    gap: 8,
+  },
+  sectionAfterHero: {
+    // Hero already owns the 164px gap above this block
+    paddingTop: 0,
   },
   sectionTitle: {
     color: LANDING.cocoa,
@@ -294,15 +304,24 @@ const styles = StyleSheet.create({
     textAlign: 'center',
     fontFamily: 'DMSans_500Medium',
     maxWidth: 331,
+    marginBottom: 4,
   },
   carousel: {
-    paddingHorizontal: 24,
-    paddingVertical: 8,
+    paddingLeft: 24,
+    paddingTop: 2,
+    paddingBottom: 2,
+  },
+  carouselRow: {
+    flexDirection: 'row',
     alignItems: 'flex-start',
+    gap: 14,
+  },
+  carouselEndPad: {
+    width: 24,
   },
   dandanWrap: {
     width: '100%',
-    marginTop: 8,
+    marginTop: 0,
     overflow: 'hidden',
   },
   dandan: {
@@ -313,7 +332,7 @@ const styles = StyleSheet.create({
   logWrap: {
     width: '100%',
     paddingHorizontal: 12,
-    marginTop: 8,
+    marginTop: 0,
     alignItems: 'center',
   },
   logImage: {
@@ -322,9 +341,9 @@ const styles = StyleSheet.create({
   },
   footer: {
     paddingHorizontal: 28,
-    paddingTop: 40,
+    paddingTop: 20,
     paddingBottom: 16,
-    gap: 18,
+    gap: 14,
     alignItems: 'center',
   },
   footerMark: {
