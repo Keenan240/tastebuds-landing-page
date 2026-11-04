@@ -37,31 +37,35 @@ export type FoodId = (typeof FOOD_IDS)[number];
 
 export const DURATIONS = {
   /** Orange into the tilted bowl — a bit slower / weightier */
-  firstDrop: 820,
+  firstDrop: 740,
   /** Rest of pieces into the leveled bowl */
-  restDrop: 780,
-  restStagger: 110,
+  restDrop: 680,
+  restStagger: 90,
   /**
    * When the orange "hits" / bowl starts leveling, as a fraction of firstDrop.
    * Early so straighten reads as part of the contact.
    */
   impactAt: 0.36,
   /** Beat after orange overshoot starts before the rest cascade in */
-  holdAfterLevel: 50,
-  holdAfterFull: 260,
-  collapse: 420,
-  /** Empty bowl beat before the pre-peek shake */
-  holdEmpty: 280,
-  /** Fast multi-swing rumble before the smile rises */
-  prePeekShake: 420,
+  holdAfterLevel: 40,
+  /** Short beat once the bowl is full, before the filled shake */
+  holdAfterFull: 120,
+  /** Food collapses straight down after the filled shake */
+  collapse: 300,
+  /** Brief empty beat before the smile peeks */
+  holdEmpty: 80,
+  /** Soft multi-swing rumble while food is still in the bowl */
+  prePeekShake: 280,
   /** Short beat with smile on but still buried, then rise */
-  holdBeforePeek: 50,
-  peek: 360,
+  holdBeforePeek: 40,
+  peek: 300,
   /** Pause while the logo is peeked before launch */
-  holdAfterPeek: 520,
-  launch: 520,
-  /** One half-swing of the rumble */
-  shakeTick: 38,
+  holdAfterPeek: 260,
+  launch: 420,
+  /** Logo dissolves at the top before landing handoff */
+  logoFade: 420,
+  /** One half-swing of the filled-bowl rumble */
+  shakeTick: 48,
 } as const;
 
 export const SPRINGS = {
@@ -77,10 +81,8 @@ export const SPRINGS = {
   launch: { damping: 14, stiffness: 190, mass: 0.8 },
 } as const;
 
-/** Rapid left/right angles for the pre-peek rumble (timing, not springs). */
-export const BOWL_RUMBLE_ANGLES = [
-  11, -13, 12, -11, 10, -9, 8, -7, 5, -4, 2, 0,
-] as const;
+/** Softer left/right angles for the filled-bowl rumble (timing, not springs). */
+export const BOWL_RUMBLE_ANGLES = [6, -7, 5, -4, 3, -2, 0] as const;
 
 export const IPHONE = {
   width: 390,

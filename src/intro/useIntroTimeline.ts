@@ -15,7 +15,6 @@ import {
   BOWL_START_TILT,
   DURATIONS,
   FOOD_COUNT,
-  FOOD_IDS,
   SPRINGS,
 } from './phases';
 
@@ -24,8 +23,8 @@ export type IntroTimeline = ReturnType<typeof useIntroTimeline>;
 /**
  * 1) Orange drops into tilted bowl → bowl levels
  * 2) Rest fall into straight bowl
- * 3) Collapse → empty pause
- * 4) Smile appears behind rim → rises to peek → shoots up → done
+ * 3) Soft shake while food is still in the bowl
+ * 4) Collapse → smile peeks → launches → fades out → done
  */
 export function useIntroTimeline(onComplete?: () => void) {
   const [replayToken, setReplayToken] = useState(0);
@@ -163,49 +162,51 @@ export function useIntroTimeline(onComplete?: () => void) {
 
     const afterFull = restEnd + DURATIONS.holdAfterFull;
 
+    // --- Phase C: soft shake while food is still in the bowl ---
     later(afterFull, () => {
-      markPhase('collapse');
-      foodCollapse.value = withSpring(1, SPRINGS.peek);
-      foods.forEach((f, i) => {
-        f.opacity.value = withDelay(
-          i * 35,
-          withTiming(0, { duration: DURATIONS.collapse * 0.65 }),
-        );
-      });
-    });
-
-    const afterEmpty = afterFull + DURATIONS.collapse + DURATIONS.holdEmpty;
-
-    // Empty bowl rumble — many fast left/right ticks (not slow springs)
-    later(afterEmpty, () => {
       markPhase('shake');
-      const tick = { duration: DURATIONS.shakeTick, easing: Easing.linear };
+      const tick = { duration: DURATIONS.shakeTick, easing: Easing.inOut(Easing.sin) };
       bowlRotate.value = withSequence(
         ...BOWL_RUMBLE_ANGLES.map((angle) => withTiming(angle, tick)),
       );
     });
 
     const afterShake =
-      afterEmpty + BOWL_RUMBLE_ANGLES.length * DURATIONS.shakeTick + 40;
+      afterFull + BOWL_RUMBLE_ANGLES.length * DURATIONS.shakeTick + 20;
 
+    // --- Phase D: collapse food straight down ---
     later(afterShake, () => {
+      markPhase('collapse');
+      foodCollapse.value = withSpring(1, SPRINGS.peek);
+      foods.forEach((f, i) => {
+        f.opacity.value = withDelay(
+          i * 28,
+          withTiming(0, { duration: DURATIONS.collapse * 0.7 }),
+        );
+      });
+    });
+
+    const afterEmpty = afterShake + DURATIONS.collapse + DURATIONS.holdEmpty;
+
+    // --- Phase E: smile peeks from behind the rim ---
+    later(afterEmpty, () => {
       markPhase('smile-ready');
-      // Appear behind the bowl while still fully buried
       logoOpacity.value = 1;
       logoPeek.value = 0;
     });
 
-    later(afterShake + DURATIONS.holdBeforePeek, () => {
+    later(afterEmpty + DURATIONS.holdBeforePeek, () => {
       markPhase('peek');
       logoPeek.value = withSpring(1, SPRINGS.peek);
     });
 
     const afterPeek =
-      afterShake +
+      afterEmpty +
       DURATIONS.holdBeforePeek +
       DURATIONS.peek +
       DURATIONS.holdAfterPeek;
 
+    // --- Phase F: launch to top, bowl exits, logo dissolves ---
     later(afterPeek, () => {
       markPhase('launch');
       logoLaunch.value = withSpring(1, SPRINGS.launch);
@@ -218,11 +219,22 @@ export function useIntroTimeline(onComplete?: () => void) {
         easing: Easing.out(Easing.cubic),
       });
       bowlOpacity.value = withDelay(
-        Math.round(DURATIONS.launch * 0.4),
-        withTiming(0, { duration: 200 }),
+        Math.round(DURATIONS.launch * 0.35),
+        withTiming(0, { duration: 180 }),
       );
-      later(DURATIONS.launch + 60, () => finish());
     });
+
+    const afterLaunch = afterPeek + DURATIONS.launch + 40;
+
+    later(afterLaunch, () => {
+      markPhase('logo-fade');
+      logoOpacity.value = withTiming(0, {
+        duration: DURATIONS.logoFade,
+        easing: Easing.out(Easing.cubic),
+      });
+    });
+
+    later(afterLaunch + DURATIONS.logoFade + 40, () => finish());
 
     return () => {
       cancelled = true;
