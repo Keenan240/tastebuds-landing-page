@@ -175,13 +175,16 @@ export function useIntroTimeline(onComplete?: () => void) {
 
     const afterEmpty = afterFull + DURATIONS.collapse + DURATIONS.holdEmpty;
 
-    // Empty bowl shakes a little before the smile peeks
+    // Empty bowl rumble — aggressive back-and-forth before the smile peeks
     later(afterEmpty, () => {
       markPhase('shake');
       bowlRotate.value = withSequence(
-        withSpring(5, SPRINGS.bowlShake),
-        withSpring(-4, SPRINGS.bowlShake),
-        withSpring(2.5, SPRINGS.bowlShake),
+        withSpring(14, SPRINGS.bowlShake),
+        withSpring(-16, SPRINGS.bowlShake),
+        withSpring(12, SPRINGS.bowlShake),
+        withSpring(-10, SPRINGS.bowlShake),
+        withSpring(7, SPRINGS.bowlShake),
+        withSpring(-5, SPRINGS.bowlShake),
         withSpring(0, SPRINGS.bowlStraighten),
       );
     });

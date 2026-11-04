@@ -52,8 +52,8 @@ export const DURATIONS = {
   collapse: 420,
   /** Empty bowl beat before the pre-peek shake */
   holdEmpty: 280,
-  /** Little shake on the empty bowl before the smile rises */
-  prePeekShake: 320,
+  /** Aggressive rumble before the smile rises */
+  prePeekShake: 480,
   /** Short beat with smile on but still buried, then rise */
   holdBeforePeek: 60,
   peek: 380,
@@ -70,8 +70,8 @@ export const SPRINGS = {
   bowlStraighten: { damping: 13, stiffness: 360, mass: 0.45 },
   /** Slightly softer drop for the fill pieces */
   restDrop: { damping: 16, stiffness: 130, mass: 1 },
-  /** Tiny wobble before logo peek */
-  bowlShake: { damping: 10, stiffness: 320, mass: 0.45 },
+  /** Hard rumble before logo peek — snappy left/right thrash */
+  bowlShake: { damping: 8, stiffness: 520, mass: 0.3 },
   peek: { damping: 20, stiffness: 120, mass: 1 },
   launch: { damping: 14, stiffness: 190, mass: 0.8 },
 } as const;
