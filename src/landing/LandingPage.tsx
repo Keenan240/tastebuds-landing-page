@@ -1,6 +1,7 @@
-import React from 'react';
+import React, { useCallback, useState } from 'react';
 import {
   Image,
+  LayoutChangeEvent,
   Pressable,
   ScrollView,
   StyleSheet,
@@ -12,6 +13,7 @@ import Svg, { Path } from 'react-native-svg';
 import { useSharedValue } from 'react-native-reanimated';
 
 import { LandingChrome } from '../intro/components/LandingChrome';
+import { DishCard } from './components/DishCard';
 import { FadeIn } from './components/FadeIn';
 import { GetStartedButton } from './components/GetStartedButton';
 import { LANDING } from './tokens';
@@ -19,15 +21,18 @@ import { LANDING } from './tokens';
 const WORDMARK = require('../../assets/landing/wordmark.png');
 const CARD_KKATSU = require('../../assets/landing/card-kkatsu.png');
 const CARD_KIMCHI = require('../../assets/landing/card-kimchi.png');
-const CARD_PHO = require('../../assets/landing/card-pho.png');
+const PHO_FOOD = require('../../assets/landing/pho-food.png');
 const CARD_DANDAN = require('../../assets/landing/card-dandan.png');
 const LOG_FEEDBACK = require('../../assets/landing/log-feedback.png');
 
-const DISH_CARDS = [
-  { source: CARD_KKATSU, aspect: 668 / 662, width: 236 },
-  { source: CARD_KIMCHI, aspect: 668 / 662, width: 236 },
-  { source: CARD_PHO, aspect: 266 / 662, width: 112 },
+const CARD_WIDTH = 236;
+const CARD_HEIGHT = 234;
+const DISH_ASSETS = [
+  { source: CARD_KKATSU, width: CARD_WIDTH },
+  { source: CARD_KIMCHI, width: CARD_WIDTH },
 ] as const;
+
+const DANDAN_ASPECT = 2024 / 1604;
 
 type Props = {
   onReplayIntro?: () => void;
@@ -37,9 +42,15 @@ export function LandingPage({ onReplayIntro }: Props) {
   const insets = useSafeAreaInsets();
   const chromeOpacity = useSharedValue(1);
   const chromeY = useSharedValue(0);
+  const [pageW, setPageW] = useState(0);
+
+  const onRootLayout = useCallback((e: LayoutChangeEvent) => {
+    const w = e.nativeEvent.layout.width;
+    if (w > 0) setPageW(w);
+  }, []);
 
   return (
-    <View style={styles.root}>
+    <View style={styles.root} onLayout={onRootLayout}>
       <ScrollView
         style={styles.scroll}
         contentContainerStyle={[
@@ -125,23 +136,37 @@ export function LandingPage({ onReplayIntro }: Props) {
             decelerationRate="fast"
           >
             <View style={styles.carouselRow}>
-              {DISH_CARDS.map((card, i) => (
-                <Image
+              {DISH_ASSETS.map((card, i) => (
+                <View
                   key={i}
-                  source={card.source}
-                  style={{
-                    width: card.width,
-                    height: card.width / card.aspect,
-                  }}
-                  resizeMode="contain"
-                />
+                  style={[
+                    styles.carouselCard,
+                    { width: card.width, height: CARD_HEIGHT },
+                  ]}
+                >
+                  <Image
+                    source={card.source}
+                    style={{ width: card.width, height: CARD_HEIGHT }}
+                    resizeMode="cover"
+                  />
+                </View>
               ))}
-              {/* Trailing spacer so the last card can fully enter the viewport */}
-              <View style={styles.carouselEndPad} />
+              {/* Full third card — source export was only a clipped peek */}
+              <DishCard
+                title="Beef pho"
+                price="$12.99"
+                match="98% match"
+                tags={['savory']}
+                image={PHO_FOOD}
+                restaurant="Mekong"
+                meta="1.2 km — Open"
+                width={CARD_WIDTH}
+              />
             </View>
           </ScrollView>
         </FadeIn>
 
+        {/* Discover */}
         <View style={styles.section}>
           <FadeIn>
             <Text style={styles.sectionTitle}>
@@ -149,7 +174,7 @@ export function LandingPage({ onReplayIntro }: Props) {
             </Text>
           </FadeIn>
           <FadeIn>
-            <Text style={styles.sectionBody}>
+            <Text style={[styles.sectionBody, styles.discoverBody]}>
               We use your taste profile to show you why a dish is perfect or
               maybe not for you.
             </Text>
@@ -157,15 +182,18 @@ export function LandingPage({ onReplayIntro }: Props) {
         </View>
 
         <FadeIn style={styles.dandanWrap}>
-          <Image
-            source={CARD_DANDAN}
-            style={styles.dandan}
-            resizeMode="contain"
-            accessibilityLabel="Dandan noodles match card"
-          />
+          {pageW > 0 ? (
+            <Image
+              source={CARD_DANDAN}
+              style={{ width: pageW, height: pageW * DANDAN_ASPECT }}
+              resizeMode="stretch"
+              accessibilityLabel="Dandan noodles match card"
+            />
+          ) : null}
         </FadeIn>
 
-        <View style={styles.section}>
+        {/* Logs — 48px below the discover photo block */}
+        <View style={[styles.section, styles.logsSection]}>
           <FadeIn>
             <Text style={styles.sectionTitle}>We learn from your logs!</Text>
           </FadeIn>
@@ -220,7 +248,6 @@ const styles = StyleSheet.create({
     alignItems: 'center',
     justifyContent: 'center',
     minHeight: 44,
-    // Figma: ~120px from logo bottom to hero headline
     marginBottom: 120,
     paddingHorizontal: 30,
   },
@@ -246,7 +273,6 @@ const styles = StyleSheet.create({
     paddingHorizontal: 30,
     alignItems: 'center',
     gap: 14,
-    // Figma: ~164px from hero CTA to the next section
     marginBottom: 164,
   },
   titleWrap: {
@@ -282,12 +308,11 @@ const styles = StyleSheet.create({
   section: {
     paddingHorizontal: 30,
     paddingTop: 12,
-    paddingBottom: 4,
+    paddingBottom: 0,
     alignItems: 'center',
     gap: 8,
   },
   sectionAfterHero: {
-    // Hero already owns the 164px gap above this block
     paddingTop: 0,
   },
   sectionTitle: {
@@ -304,10 +329,19 @@ const styles = StyleSheet.create({
     textAlign: 'center',
     fontFamily: 'DMSans_500Medium',
     maxWidth: 331,
-    marginBottom: 4,
+  },
+  /** 36px between discover copy and the full-bleed photo card */
+  discoverBody: {
+    marginBottom: 36,
+  },
+  /** 48px between dandan block and logs section */
+  logsSection: {
+    marginTop: 48,
+    paddingTop: 0,
   },
   carousel: {
     paddingLeft: 24,
+    paddingRight: 24,
     paddingTop: 2,
     paddingBottom: 2,
   },
@@ -316,23 +350,18 @@ const styles = StyleSheet.create({
     alignItems: 'flex-start',
     gap: 14,
   },
-  carouselEndPad: {
-    width: 24,
+  carouselCard: {
+    overflow: 'hidden',
+    borderRadius: 20,
   },
   dandanWrap: {
     width: '100%',
-    marginTop: 0,
-    overflow: 'hidden',
-  },
-  dandan: {
-    // RN Web often ignores aspectRatio on Image — pin height from asset ratio.
-    width: '100%',
-    height: 468,
+    alignSelf: 'stretch',
   },
   logWrap: {
     width: '100%',
     paddingHorizontal: 12,
-    marginTop: 0,
+    marginTop: 12,
     alignItems: 'center',
   },
   logImage: {
