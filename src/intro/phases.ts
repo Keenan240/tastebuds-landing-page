@@ -3,6 +3,7 @@
 export const COLORS = {
   background: '#FDFBF4',
   brown: '#3D1F05',
+  bowl: '#87A4D5',
   beige: '#E8DCC8',
   orange: '#E87722',
   chromeBg: 'rgba(255, 255, 255, 0.72)',
@@ -20,8 +21,10 @@ export const HUNGRY_LINES = [
 ] as const;
 export const HUNGRY_TEXT = HUNGRY_LINES.join('\n');
 
-/** Bowl starts tilted; first (leftmost) piece levels it. */
+/** Bowl starts tilted right; orange hits and overshoots left past level. */
 export const BOWL_START_TILT = 16;
+/** Degrees past upright (negative = left) after the orange lands. */
+export const BOWL_OVERSHOOT_LEFT = -9;
 
 export const FOOD_COUNT = 4;
 
@@ -42,9 +45,9 @@ export const DURATIONS = {
    * When the orange "hits" / bowl starts leveling, as a fraction of firstDrop.
    * Early so straighten reads as part of the contact.
    */
-  impactAt: 0.4,
-  /** Beat after level starts before the rest cascade in */
-  holdAfterLevel: 70,
+  impactAt: 0.36,
+  /** Beat after orange overshoot starts before the rest cascade in */
+  holdAfterLevel: 50,
   holdAfterFull: 260,
   collapse: 420,
   /** Empty bowl beat before the pre-peek shake */
@@ -61,8 +64,10 @@ export const DURATIONS = {
 export const SPRINGS = {
   /** Softer orange drop */
   drop: { damping: 16, stiffness: 130, mass: 1 },
-  /** Very fast straighten on orange contact */
-  bowlLevel: { damping: 12, stiffness: 380, mass: 0.4 },
+  /** Fast overshoot past level when orange hits */
+  bowlOvershoot: { damping: 11, stiffness: 420, mass: 0.35 },
+  /** Snappy return to straight when the next pieces land */
+  bowlStraighten: { damping: 13, stiffness: 360, mass: 0.45 },
   /** Slightly softer drop for the fill pieces */
   restDrop: { damping: 16, stiffness: 130, mass: 1 },
   /** Tiny wobble before logo peek */

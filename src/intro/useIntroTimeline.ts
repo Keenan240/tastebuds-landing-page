@@ -10,6 +10,7 @@ import {
 } from 'react-native-reanimated';
 
 import {
+  BOWL_OVERSHOOT_LEFT,
   BOWL_START_TILT,
   DURATIONS,
   FOOD_COUNT,
@@ -119,27 +120,39 @@ export function useIntroTimeline(onComplete?: () => void) {
     resetValues();
     markPhase('first-drop');
 
-    // --- Phase A: leftmost orange into tilted bowl, then level ---
+    // --- Phase A: orange into tilted bowl → overshoot past level to the left ---
     later(0, () => {
       foods[0].drop.value = withSpring(1, SPRINGS.drop);
     });
 
     const firstHit = Math.round(DURATIONS.firstDrop * DURATIONS.impactAt);
     later(firstHit, () => {
-      markPhase('level');
-      bowlRotate.value = withSpring(0, SPRINGS.bowlLevel);
+      markPhase('overshoot');
+      bowlRotate.value = withSpring(
+        BOWL_OVERSHOOT_LEFT,
+        SPRINGS.bowlOvershoot,
+      );
     });
 
-    // Rest starts once the bowl has begun leveling — don't wait for a long settle
     const restStart = firstHit + DURATIONS.holdAfterLevel;
 
-    // --- Phase B: remaining pieces into a straight bowl (slower cascade) ---
+    // --- Phase B: rest fall in; first of them snaps the bowl back to straight ---
     for (let i = 1; i < FOOD_COUNT; i++) {
       const releaseAt = restStart + (i - 1) * DURATIONS.restStagger;
+      const hitAt =
+        releaseAt + Math.round(DURATIONS.restDrop * DURATIONS.impactAt);
+
       later(releaseAt, () => {
         markPhase('fill');
         foods[i].drop.value = withSpring(1, SPRINGS.restDrop);
       });
+
+      if (i === 1) {
+        later(hitAt, () => {
+          markPhase('straighten');
+          bowlRotate.value = withSpring(0, SPRINGS.bowlStraighten);
+        });
+      }
     }
 
     const restEnd =
@@ -169,7 +182,7 @@ export function useIntroTimeline(onComplete?: () => void) {
         withSpring(5, SPRINGS.bowlShake),
         withSpring(-4, SPRINGS.bowlShake),
         withSpring(2.5, SPRINGS.bowlShake),
-        withSpring(0, SPRINGS.bowlLevel),
+        withSpring(0, SPRINGS.bowlStraighten),
       );
     });
 

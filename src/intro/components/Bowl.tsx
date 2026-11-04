@@ -44,7 +44,7 @@ const styles = StyleSheet.create({
   bowl: {
     width: LAYOUT.bowlWidth,
     height: LAYOUT.bowlHeight,
-    backgroundColor: COLORS.brown,
+    backgroundColor: COLORS.bowl,
     borderBottomLeftRadius: LAYOUT.bowlWidth / 2,
     borderBottomRightRadius: LAYOUT.bowlWidth / 2,
     borderTopLeftRadius: 2,
