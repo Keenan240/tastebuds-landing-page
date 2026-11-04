@@ -33,16 +33,16 @@ export const FOOD_IDS = ['tomato', 'leek', 'radish', 'pepper'] as const;
 export type FoodId = (typeof FOOD_IDS)[number];
 
 export const DURATIONS = {
-  /** First piece into the tilted bowl */
-  firstDrop: 780,
+  /** First piece into the tilted bowl — snappier so the catch reads clearly */
+  firstDrop: 620,
   /** Rest of pieces into the leveled bowl */
-  restDrop: 720,
-  restStagger: 120,
+  restDrop: 580,
+  restStagger: 85,
   /** Hit timing as fraction of that piece's drop */
-  impactAt: 0.78,
-  /** Beat after bowl is level before the rest fall */
-  holdAfterLevel: 280,
-  holdAfterFull: 300,
+  impactAt: 0.7,
+  /** Short beat after bowl levels before the rest cascade in */
+  holdAfterLevel: 120,
+  holdAfterFull: 260,
   collapse: 420,
   holdEmpty: 360,
   /** Short beat with smile on but still buried, then rise */
@@ -53,8 +53,8 @@ export const DURATIONS = {
 } as const;
 
 export const SPRINGS = {
-  drop: { damping: 16, stiffness: 140, mass: 0.95 },
-  bowlLevel: { damping: 16, stiffness: 150, mass: 0.9 },
+  drop: { damping: 15, stiffness: 170, mass: 0.85 },
+  bowlLevel: { damping: 15, stiffness: 180, mass: 0.8 },
   peek: { damping: 20, stiffness: 120, mass: 1 },
   launch: { damping: 14, stiffness: 190, mass: 0.8 },
 } as const;

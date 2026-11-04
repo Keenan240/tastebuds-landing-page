@@ -129,8 +129,8 @@ export function useIntroTimeline(onComplete?: () => void) {
       bowlRotate.value = withSpring(0, SPRINGS.bowlLevel);
     });
 
-    const restStart =
-      firstHit + DURATIONS.holdAfterLevel + 200; /* bowl mostly level */
+    // Rest starts once the bowl has begun leveling — don't wait for a long settle
+    const restStart = firstHit + DURATIONS.holdAfterLevel;
 
     // --- Phase B: remaining pieces into a straight bowl ---
     for (let i = 1; i < FOOD_COUNT; i++) {
