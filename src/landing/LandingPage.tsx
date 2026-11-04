@@ -11,7 +11,6 @@ import {
   View,
 } from 'react-native';
 import { useSafeAreaInsets } from 'react-native-safe-area-context';
-import Svg, { Path } from 'react-native-svg';
 import {
   useAnimatedScrollHandler,
   useSharedValue,
@@ -25,6 +24,7 @@ import { ScrollRevealProvider, type NativeViewLike } from './ScrollReveal';
 import { LANDING } from './tokens';
 
 const WORDMARK = require('../../assets/landing/wordmark.png');
+const BRUSH_STROKE = require('../../assets/landing/brush-stroke.png');
 const CARD_KKATSU = require('../../assets/landing/card-kkatsu.png');
 const CARD_KIMCHI = require('../../assets/landing/card-kimchi.png');
 const CARD_PHO = require('../../assets/landing/card-pho.png');
@@ -123,12 +123,13 @@ export function LandingPage({ onReplayIntro }: Props) {
                 <View style={styles.fixLine}>
                   <Text style={styles.heroTitle}>Let’s Fix That!</Text>
                   <View style={styles.brushWrap} pointerEvents="none">
-                    <Svg width={210} height={18} viewBox="0 0 210 18">
-                      <Path
-                        d="M4 9.2 C 10 6.4, 22 5.6, 36 5.8 L 174 5.8 C 188 5.6, 200 6.4, 206 9.2 C 200 11.8, 188 12.4, 174 12.2 L 36 12.2 C 22 12.4, 10 11.8, 4 9.2 Z"
-                        fill={LANDING.pistachio}
-                      />
-                    </Svg>
+                    <Image
+                      source={BRUSH_STROKE}
+                      style={styles.brush}
+                      resizeMode="contain"
+                      accessibilityElementsHidden
+                      importantForAccessibility="no"
+                    />
                   </View>
                 </View>
               </FadeIn>
@@ -312,10 +313,15 @@ const styles = StyleSheet.create({
     textAlign: 'center',
   },
   brushWrap: {
-    marginTop: -8,
-    marginLeft: 6,
+    marginTop: -6,
     alignItems: 'center',
+    justifyContent: 'center',
+    height: 28,
     transform: [{ rotate: '-13deg' }],
+  },
+  brush: {
+    width: 204,
+    height: 22,
   },
   heroBody: {
     color: LANDING.grey,
