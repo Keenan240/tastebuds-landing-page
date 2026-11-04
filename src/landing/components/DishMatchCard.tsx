@@ -1,7 +1,16 @@
 import React from 'react';
-import { StyleSheet, Text, View } from 'react-native';
+import { LayoutChangeEvent, StyleSheet, Text, View } from 'react-native';
 
 import { LANDING } from '../tokens';
+
+function MatchRing() {
+  return (
+    <View style={styles.ring}>
+      <View style={styles.ringTrack} />
+      <View style={styles.ringFill} />
+    </View>
+  );
+}
 
 function TraitRow({
   label,
@@ -12,29 +21,62 @@ function TraitRow({
   youPct: number;
   dishPct: number;
 }) {
+  const [trackW, setTrackW] = React.useState(0);
+  const onLayout = (e: LayoutChangeEvent) => {
+    setTrackW(e.nativeEvent.layout.width);
+  };
+
   return (
     <View style={styles.trait}>
       <Text style={styles.traitLabel}>{label}</Text>
-      <View style={styles.track}>
-        <View style={[styles.youDot, { left: `${youPct}%` as `${number}%` }]} />
-        <View style={[styles.dishDot, { left: `${dishPct}%` as `${number}%` }]} />
+      <View style={styles.track} onLayout={onLayout}>
+        {trackW > 0 ? (
+          <>
+            <View
+              style={[
+                styles.youDot,
+                { left: (youPct / 100) * trackW - 6 },
+              ]}
+            />
+            <View
+              style={[
+                styles.dishDot,
+                { left: (dishPct / 100) * trackW - 6 },
+              ]}
+            />
+          </>
+        ) : null}
       </View>
       <View style={styles.trackLabels}>
-        <Text style={[styles.mini, { left: `${Math.max(0, youPct - 4)}%` as `${number}%` }]}>
-          You
-        </Text>
-        <Text style={[styles.mini, { left: `${Math.max(0, dishPct - 4)}%` as `${number}%` }]}>
-          Dish
-        </Text>
+        {trackW > 0 ? (
+          <>
+            <Text
+              style={[
+                styles.mini,
+                { left: Math.max(0, (youPct / 100) * trackW - 10) },
+              ]}
+            >
+              You
+            </Text>
+            <Text
+              style={[
+                styles.mini,
+                { left: Math.max(0, (dishPct / 100) * trackW - 12) },
+              ]}
+            >
+              Dish
+            </Text>
+          </>
+        ) : null}
       </View>
     </View>
   );
 }
 
-/** Simplified Dandan noodles match card from Figma. */
+/** Dandan noodles match card from Figma (floats over the orange wave band). */
 export function DishMatchCard() {
   return (
-    <View style={styles.band}>
+    <View style={styles.wrap}>
       <View style={styles.card}>
         <View style={styles.photo} />
         <View style={styles.titleRow}>
@@ -47,10 +89,7 @@ export function DishMatchCard() {
               <Text style={styles.pct}>98%</Text>
               <Text style={styles.matchWord}>match</Text>
             </View>
-            <View style={styles.rings}>
-              <View style={styles.ringMuted} />
-              <View style={styles.ringCocoa} />
-            </View>
+            <MatchRing />
             <View style={styles.copy}>
               <Text style={styles.bold}>Heated, bold flavours</Text>
               <Text style={styles.small}>
@@ -68,12 +107,11 @@ export function DishMatchCard() {
 }
 
 const styles = StyleSheet.create({
-  band: {
+  wrap: {
     width: '100%',
-    backgroundColor: LANDING.peachBand,
-    paddingVertical: 28,
     paddingHorizontal: 24,
     alignItems: 'center',
+    zIndex: 1,
   },
   card: {
     width: '78%',
@@ -82,8 +120,8 @@ const styles = StyleSheet.create({
     padding: 15,
     gap: 11,
     shadowColor: LANDING.cocoa,
-    shadowOpacity: 0.11,
-    shadowRadius: 14,
+    shadowOpacity: 0.14,
+    shadowRadius: 16,
     shadowOffset: { width: 0, height: 10 },
   },
   photo: {
@@ -130,22 +168,29 @@ const styles = StyleSheet.create({
     fontSize: 9,
     fontFamily: 'DMSans_400Regular',
   },
-  rings: { width: 36, height: 36 },
-  ringMuted: {
+  ring: {
+    width: 36,
+    height: 36,
+    marginTop: 2,
+  },
+  ringTrack: {
     position: 'absolute',
     width: 36,
     height: 36,
     borderRadius: 18,
-    backgroundColor: '#EEEEEE',
+    borderWidth: 4,
+    borderColor: '#EEEEEE',
   },
-  ringCocoa: {
+  ringFill: {
     position: 'absolute',
-    width: 28,
-    height: 28,
-    borderRadius: 14,
-    left: 4,
-    top: 4,
-    backgroundColor: LANDING.cocoa,
+    width: 36,
+    height: 36,
+    borderRadius: 18,
+    borderWidth: 4,
+    borderColor: LANDING.cocoa,
+    borderRightColor: 'transparent',
+    borderBottomColor: 'transparent',
+    transform: [{ rotate: '-45deg' }],
   },
   copy: { flex: 1, gap: 4 },
   bold: {
@@ -168,7 +213,6 @@ const styles = StyleSheet.create({
   track: {
     height: 12,
     marginTop: 4,
-    backgroundColor: 'transparent',
     position: 'relative',
   },
   youDot: {
@@ -177,7 +221,6 @@ const styles = StyleSheet.create({
     height: 12,
     borderRadius: 6,
     backgroundColor: LANDING.cocoa,
-    marginLeft: -6,
   },
   dishDot: {
     position: 'absolute',
@@ -186,8 +229,7 @@ const styles = StyleSheet.create({
     borderRadius: 6,
     backgroundColor: LANDING.beige,
     borderWidth: 0.7,
-    borderColor: LANDING.beige,
-    marginLeft: -6,
+    borderColor: LANDING.chestnut,
   },
   trackLabels: {
     height: 14,

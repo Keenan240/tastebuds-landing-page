@@ -1,22 +1,46 @@
 import React from 'react';
 import { StyleSheet, Text, View } from 'react-native';
+import Svg, { Circle, Ellipse, Path } from 'react-native-svg';
 
 import { LANDING } from '../tokens';
 
-function Face({ tint }: { tint: 'cream' | 'pistachio' }) {
+function FruitIcon() {
   return (
-    <View
-      style={[
-        styles.face,
-        tint === 'pistachio' ? styles.facePistachio : styles.faceCream,
-      ]}
-    >
-      <View style={styles.eyes}>
-        <View style={styles.eye} />
-        <View style={styles.eye} />
-      </View>
-      <View style={styles.mouth} />
-    </View>
+    <Svg width={56} height={56} viewBox="0 0 56 56" fill="none">
+      <Ellipse cx="22" cy="30" rx="14" ry="16" fill="#F6C84C" />
+      <Ellipse cx="34" cy="30" rx="14" ry="16" fill="#FFF6D6" stroke={LANDING.carrot} strokeWidth={1.5} />
+      <Path
+        d="M28 14c2-6 8-8 10-8"
+        stroke={LANDING.carrot}
+        strokeWidth={1.5}
+        strokeLinecap="round"
+      />
+      <Circle cx="18" cy="28" r="1.6" fill={LANDING.carrot} />
+      <Circle cx="24" cy="28" r="1.6" fill={LANDING.carrot} />
+      <Path d="M19 34c2 2 5 2 7 0" stroke={LANDING.carrot} strokeWidth={1.4} strokeLinecap="round" />
+    </Svg>
+  );
+}
+
+function ChiliIcon() {
+  return (
+    <Svg width={56} height={56} viewBox="0 0 56 56" fill="none">
+      <Path
+        d="M30 12c6 2 10 10 10 18 0 10-6 18-12 20-4 1-8-2-9-8-2-8 2-18 8-24 1-1 2-3 3-6z"
+        fill={LANDING.pistachio}
+        stroke={LANDING.carrot}
+        strokeWidth={1.5}
+      />
+      <Path
+        d="M30 12c2 4 1 7-1 9"
+        stroke={LANDING.carrot}
+        strokeWidth={1.4}
+        strokeLinecap="round"
+      />
+      <Circle cx="28" cy="30" r="1.5" fill={LANDING.carrot} />
+      <Circle cx="34" cy="30" r="1.5" fill={LANDING.carrot} />
+      <Path d="M29 36c2 1.5 5 1.5 7 0" stroke={LANDING.carrot} strokeWidth={1.3} strokeLinecap="round" />
+    </Svg>
   );
 }
 
@@ -50,20 +74,20 @@ function ScaleRow({
   );
 }
 
-/** Simplified “Let’s stir the pot!” quiz card from Figma. */
+/** “Let’s stir the pot!” quiz card from Figma. */
 export function TasteQuizCard() {
   return (
     <View style={styles.shell}>
       <View style={styles.card}>
         <View style={styles.progress}>
-          {[1, 1, 1, 0, 0].map((on, i) => (
+          {[1, 1, 1, 0].map((on, i) => (
             <View key={i} style={[styles.bar, on ? styles.barOn : styles.barOff]} />
           ))}
         </View>
         <Text style={styles.heading}>Let’s stir the pot!</Text>
         <View style={styles.faces}>
-          <Face tint="cream" />
-          <Face tint="pistachio" />
+          <FruitIcon />
+          <ChiliIcon />
         </View>
         <View style={styles.scales}>
           <ScaleRow title="Sweet or Sour?" left="Sweet" right="Sour" activeIndex={2} />
@@ -118,34 +142,9 @@ const styles = StyleSheet.create({
   },
   faces: {
     flexDirection: 'row',
-    justifyContent: 'space-between',
+    justifyContent: 'space-around',
     paddingHorizontal: 8,
-  },
-  face: {
-    width: 72,
-    height: 72,
-    borderRadius: 16,
-    borderWidth: 1.5,
-    borderColor: LANDING.carrot,
-    alignItems: 'center',
-    justifyContent: 'center',
-    gap: 6,
-  },
-  faceCream: { backgroundColor: LANDING.bg },
-  facePistachio: { backgroundColor: LANDING.pistachio },
-  eyes: { flexDirection: 'row', gap: 12 },
-  eye: {
-    width: 6,
-    height: 7,
-    borderRadius: 3,
-    backgroundColor: LANDING.carrot,
-  },
-  mouth: {
-    width: 16,
-    height: 6,
-    borderBottomWidth: 2,
-    borderColor: LANDING.carrot,
-    borderRadius: 8,
+    paddingVertical: 4,
   },
   scales: {
     flexDirection: 'row',

@@ -1,5 +1,5 @@
 import React from 'react';
-import { Pressable, StyleSheet, Text, View, ViewStyle } from 'react-native';
+import { Pressable, StyleSheet, Text, ViewStyle } from 'react-native';
 
 import { LANDING } from '../tokens';
 
@@ -36,17 +36,18 @@ export function GetStartedButton({
 
 const styles = StyleSheet.create({
   btn: {
-    paddingVertical: 12,
-    paddingHorizontal: 40,
-    borderRadius: 12,
+    minHeight: 52,
+    paddingVertical: 14,
+    paddingHorizontal: 52,
+    borderRadius: 16,
     alignItems: 'center',
     justifyContent: 'center',
     borderTopWidth: 1,
     borderTopColor: LANDING.buttonBorder,
-    shadowOffset: { width: 0, height: 2 },
+    shadowOffset: { width: 0, height: 3 },
     shadowOpacity: 1,
     shadowRadius: 0,
-    elevation: 2,
+    elevation: 3,
   },
   carrot: {
     backgroundColor: LANDING.carrot,

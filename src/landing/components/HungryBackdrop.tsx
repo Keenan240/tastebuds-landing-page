@@ -27,9 +27,9 @@ export function HungryBackdrop() {
 const styles = StyleSheet.create({
   wrap: {
     position: 'absolute',
-    left: -40,
-    right: -40,
-    top: 200,
+    left: -48,
+    right: -48,
+    top: 160,
     zIndex: 0,
     alignItems: 'center',
   },
@@ -40,7 +40,7 @@ const styles = StyleSheet.create({
     fontFamily: 'Urbanist_600SemiBold',
     fontWeight: '600',
     textAlign: 'center',
-    opacity: Platform.OS === 'web' ? 1 : 0.55,
+    opacity: Platform.OS === 'web' ? 0.95 : 0.5,
   },
   line2: {
     marginLeft: 40,
