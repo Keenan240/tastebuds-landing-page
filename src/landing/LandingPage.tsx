@@ -313,15 +313,16 @@ const styles = StyleSheet.create({
     textAlign: 'center',
   },
   brushWrap: {
-    marginTop: -6,
+    marginTop: -4,
     alignItems: 'center',
     justifyContent: 'center',
-    height: 28,
+    width: 220,
+    height: 36,
     transform: [{ rotate: '-13deg' }],
   },
   brush: {
-    width: 204,
-    height: 22,
+    width: 210,
+    height: 24,
   },
   heroBody: {
     color: LANDING.grey,
