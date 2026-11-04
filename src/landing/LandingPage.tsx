@@ -25,6 +25,7 @@ import { LANDING } from './tokens';
 
 const WORDMARK = require('../../assets/landing/wordmark.png');
 const BRUSH_STROKE = require('../../assets/landing/brush-stroke.png');
+const FOOTER_RULE = require('../../assets/landing/footer-rule.png');
 const CARD_KKATSU = require('../../assets/landing/card-kkatsu.png');
 const CARD_KIMCHI = require('../../assets/landing/card-kimchi.png');
 const CARD_PHO = require('../../assets/landing/card-pho.png');
@@ -236,14 +237,23 @@ export function LandingPage({ onReplayIntro }: Props) {
             </View>
 
             <FadeIn style={styles.footer}>
-              <Image
-                source={WORDMARK}
-                style={styles.footerMark}
-                resizeMode="contain"
-              />
-              <View style={styles.footerMetaBlock}>
-                <Text style={styles.footerMeta}>© Tastebuds</Text>
-                <Text style={styles.footerMeta}>Built by QTMA</Text>
+              <View style={styles.footerBrand}>
+                <Image
+                  source={WORDMARK}
+                  style={styles.footerMark}
+                  resizeMode="contain"
+                />
+                <Image
+                  source={FOOTER_RULE}
+                  style={styles.footerRule}
+                  resizeMode="stretch"
+                  accessibilityElementsHidden
+                  importantForAccessibility="no"
+                />
+                <View style={styles.footerRow}>
+                  <Text style={styles.footerMeta}>© Tastebuds</Text>
+                  <Text style={styles.footerMeta}>Built by QTMA</Text>
+                </View>
               </View>
             </FadeIn>
           </View>
@@ -406,17 +416,22 @@ const styles = StyleSheet.create({
     paddingTop: 40,
     paddingBottom: 24,
     alignItems: 'center',
-    gap: 16,
+  },
+  footerBrand: {
+    width: 168,
+    alignItems: 'center',
+    gap: 12,
   },
   footerMark: {
     width: 168,
     height: 32,
   },
-  footerMetaBlock: {
+  footerRule: {
     width: 168,
-    borderTopWidth: 1,
-    borderTopColor: LANDING.carrot,
-    paddingTop: 14,
+    height: 2,
+  },
+  footerRow: {
+    width: 168,
     flexDirection: 'row',
     justifyContent: 'space-between',
   },
