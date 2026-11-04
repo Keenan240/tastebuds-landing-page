@@ -162,20 +162,33 @@ export function useIntroTimeline(onComplete?: () => void) {
 
     const afterEmpty = afterFull + DURATIONS.collapse + DURATIONS.holdEmpty;
 
+    // Empty bowl shakes a little before the smile peeks
     later(afterEmpty, () => {
+      markPhase('shake');
+      bowlRotate.value = withSequence(
+        withSpring(5, SPRINGS.bowlShake),
+        withSpring(-4, SPRINGS.bowlShake),
+        withSpring(2.5, SPRINGS.bowlShake),
+        withSpring(0, SPRINGS.bowlLevel),
+      );
+    });
+
+    const afterShake = afterEmpty + DURATIONS.prePeekShake;
+
+    later(afterShake, () => {
       markPhase('smile-ready');
       // Appear behind the bowl while still fully buried
       logoOpacity.value = 1;
       logoPeek.value = 0;
     });
 
-    later(afterEmpty + DURATIONS.holdBeforePeek, () => {
+    later(afterShake + DURATIONS.holdBeforePeek, () => {
       markPhase('peek');
       logoPeek.value = withSpring(1, SPRINGS.peek);
     });
 
     const afterPeek =
-      afterEmpty +
+      afterShake +
       DURATIONS.holdBeforePeek +
       DURATIONS.peek +
       DURATIONS.holdAfterPeek;

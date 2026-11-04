@@ -33,34 +33,40 @@ export const FOOD_IDS = ['tomato', 'leek', 'radish', 'pepper'] as const;
 export type FoodId = (typeof FOOD_IDS)[number];
 
 export const DURATIONS = {
-  /** First piece into the tilted bowl — snappier so the catch reads clearly */
-  firstDrop: 620,
-  /** Rest of pieces into the leveled bowl — a touch slower than the orange */
+  /** Orange into the tilted bowl — a bit slower / weightier */
+  firstDrop: 820,
+  /** Rest of pieces into the leveled bowl */
   restDrop: 780,
   restStagger: 110,
   /**
    * When the orange "hits" / bowl starts leveling, as a fraction of firstDrop.
    * Early so straighten reads as part of the contact.
    */
-  impactAt: 0.38,
+  impactAt: 0.4,
   /** Beat after level starts before the rest cascade in */
   holdAfterLevel: 70,
   holdAfterFull: 260,
   collapse: 420,
-  holdEmpty: 360,
+  /** Empty bowl beat before the pre-peek shake */
+  holdEmpty: 280,
+  /** Little shake on the empty bowl before the smile rises */
+  prePeekShake: 320,
   /** Short beat with smile on but still buried, then rise */
-  holdBeforePeek: 80,
+  holdBeforePeek: 60,
   peek: 380,
   holdAfterPeek: 320,
   launch: 520,
 } as const;
 
 export const SPRINGS = {
-  drop: { damping: 15, stiffness: 170, mass: 0.85 },
+  /** Softer orange drop */
+  drop: { damping: 16, stiffness: 130, mass: 1 },
   /** Very fast straighten on orange contact */
   bowlLevel: { damping: 12, stiffness: 380, mass: 0.4 },
   /** Slightly softer drop for the fill pieces */
   restDrop: { damping: 16, stiffness: 130, mass: 1 },
+  /** Tiny wobble before logo peek */
+  bowlShake: { damping: 10, stiffness: 320, mass: 0.45 },
   peek: { damping: 20, stiffness: 120, mass: 1 },
   launch: { damping: 14, stiffness: 190, mass: 0.8 },
 } as const;
