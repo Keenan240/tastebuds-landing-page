@@ -236,18 +236,14 @@ export function LandingPage({ onReplayIntro }: Props) {
             </View>
 
             <FadeIn style={styles.footer}>
-              <View style={styles.footerBrand}>
-                <View style={styles.footerMarkWrap}>
-                  <Image
-                    source={WORDMARK}
-                    style={styles.footerMark}
-                    resizeMode="contain"
-                  />
-                </View>
-                <View style={styles.footerRow}>
-                  <Text style={styles.footerMeta}>© Tastebuds</Text>
-                  <Text style={styles.footerMeta}>Built by QTMA</Text>
-                </View>
+              <Image
+                source={WORDMARK}
+                style={styles.footerMark}
+                resizeMode="contain"
+              />
+              <View style={styles.footerMetaBlock}>
+                <Text style={styles.footerMeta}>© Tastebuds</Text>
+                <Text style={styles.footerMeta}>Built by QTMA</Text>
               </View>
             </FadeIn>
           </View>
@@ -410,23 +406,17 @@ const styles = StyleSheet.create({
     paddingTop: 40,
     paddingBottom: 24,
     alignItems: 'center',
-  },
-  footerBrand: {
-    width: 168,
-    alignItems: 'stretch',
-    gap: 14,
-  },
-  footerMarkWrap: {
-    borderBottomWidth: 1,
-    borderBottomColor: LANDING.carrot,
-    paddingBottom: 14,
-    alignItems: 'center',
+    gap: 16,
   },
   footerMark: {
     width: 168,
     height: 32,
   },
-  footerRow: {
+  footerMetaBlock: {
+    width: 168,
+    borderTopWidth: 1,
+    borderTopColor: LANDING.carrot,
+    paddingTop: 14,
     flexDirection: 'row',
     justifyContent: 'space-between',
   },
