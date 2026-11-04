@@ -14,9 +14,10 @@ type Props = {
 export function TastebudsLogo({ width = 175 }: Props) {
   const height = width * 0.22;
   const fontSize = width * 0.185;
-  // Eyes over the “u” in tastebuds (~letter 6 of 9)
+  // Eyes over the “u” in tastebuds (~letter 6 of 9). Keep inside bounds
+  // so PhoneFrame overflow:hidden does not clip the macron.
   const eyesLeft = width * 0.555;
-  const eyesTop = -width * 0.01;
+  const eyesTop = height * 0.08;
   const eyesW = width * 0.11;
   const eyesH = width * 0.055;
 
