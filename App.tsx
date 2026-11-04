@@ -1,26 +1,41 @@
-import React, { useCallback } from 'react';
+import React, { useCallback, useState } from 'react';
 import { ActivityIndicator, StyleSheet, View } from 'react-native';
 import { GestureHandlerRootView } from 'react-native-gesture-handler';
 import { SafeAreaProvider } from 'react-native-safe-area-context';
+import {
+  DMSans_400Regular,
+  DMSans_500Medium,
+} from '@expo-google-fonts/dm-sans';
 import { Urbanist_600SemiBold, useFonts } from '@expo-google-fonts/urbanist';
 
 import { PhoneFrame } from './src/intro/components/PhoneFrame';
 import { IntroSequence } from './src/intro/IntroSequence';
 import { COLORS } from './src/intro/phases';
+import { LandingPage } from './src/landing/LandingPage';
+import { LANDING } from './src/landing/tokens';
 
 export default function App() {
   const [fontsLoaded] = useFonts({
     Urbanist_600SemiBold,
+    DMSans_400Regular,
+    DMSans_500Medium,
   });
+  const [showLanding, setShowLanding] = useState(false);
+  const [introKey, setIntroKey] = useState(0);
 
-  const onComplete = useCallback(() => {
-    // Part 2 landing hooks here
+  const onIntroComplete = useCallback(() => {
+    setShowLanding(true);
+  }, []);
+
+  const replayIntro = useCallback(() => {
+    setShowLanding(false);
+    setIntroKey((k) => k + 1);
   }, []);
 
   if (!fontsLoaded) {
     return (
       <View style={styles.loading}>
-        <ActivityIndicator color={COLORS.orange} />
+        <ActivityIndicator color={LANDING.carrot} />
       </View>
     );
   }
@@ -29,7 +44,11 @@ export default function App() {
     <GestureHandlerRootView style={styles.root}>
       <SafeAreaProvider>
         <PhoneFrame>
-          <IntroSequence onComplete={onComplete} />
+          {showLanding ? (
+            <LandingPage onReplayIntro={replayIntro} />
+          ) : (
+            <IntroSequence key={introKey} onComplete={onIntroComplete} />
+          )}
         </PhoneFrame>
       </SafeAreaProvider>
     </GestureHandlerRootView>
@@ -45,6 +64,6 @@ const styles = StyleSheet.create({
     flex: 1,
     alignItems: 'center',
     justifyContent: 'center',
-    backgroundColor: COLORS.background,
+    backgroundColor: LANDING.bg,
   },
 });

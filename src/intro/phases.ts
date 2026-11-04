@@ -1,7 +1,7 @@
 /** Tunable intro timing, copy, and design tokens. */
 
 export const COLORS = {
-  background: '#FDFBF4',
+  background: '#FBFCEE',
   brown: '#3D1F05',
   bowl: '#87A4D5',
   beige: '#E8DCC8',

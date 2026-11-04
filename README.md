@@ -1,36 +1,28 @@
-# Tastebuds Intro Animation (Part 1)
+# Tastebuds — Intro + Landing (designer prototype)
 
-Mobile web prototype of the Tastebuds splash / intro. Designed for phone browsers (later: add to home screen). No backend.
+Mobile web prototype for Tastebuds. Part 1 is the bowl intro animation; Part 2 is the scrollable landing page from Figma. No backend.
 
 ## Run locally
 
 ```bash
 npm install
-npm run web -- --port 43123
+npx expo start --web --port 43123
 ```
 
-Open [http://127.0.0.1:43123](http://127.0.0.1:43123). On a **wide desktop window** the app sits in an iPhone frame so you can inspect the mobile POV. Narrow the window or use Chrome DevTools → iPhone device mode for a full-bleed phone viewport.
+Open [http://127.0.0.1:43123](http://127.0.0.1:43123). On a wide desktop window the app sits in an iPhone frame. Use Chrome DevTools device mode for a full-bleed phone viewport.
 
-## What plays (bowl intro)
+## Flow
 
-1. Food starts **above** the top of the viewport and falls into a tilted bowl  
-2. Bowl straightens  
-3. Food collapses — bowl reads empty — brief pause  
-4. Orange smile peeks from the rim — brief pause  
-5. Smile launches up; bowl exits down  
-6. Tastebuds wordmark + search chrome hand off (Part 2 hooks here; “you hungry” is Part 2)
+1. **Intro** — food drops, bowl physics, smile peeks and launches to the top  
+2. **Landing** — blurred “you hungry…” backdrop, hero CTA, feature sections, footer  
 
-Tap **Replay** (top right) to re-run.
+Use **Replay intro** on the landing page to re-run Part 1.
 
 ## Tunables
 
-Edit [`src/intro/phases.ts`](src/intro/phases.ts):
-
-- `DURATIONS` / `SPRINGS` — timing and punch  
-- `FOOD_START` / `FOOD_PEEK` / `LAYOUT.foodSize` — drop layout  
-- `LAYOUT.hungryFontSize` — Figma type (61)  
-- Smile scales only via uniform `size` (asset aspect 53∶71)
+- Intro motion: [`src/intro/phases.ts`](src/intro/phases.ts)  
+- Landing tokens: [`src/landing/tokens.ts`](src/landing/tokens.ts)
 
 ## Stack
 
-Expo (React Native Web) + Reanimated + Urbanist.
+Expo (React Native Web) + Reanimated + Urbanist / DM Sans.
