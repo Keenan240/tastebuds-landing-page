@@ -1,6 +1,5 @@
 import React from 'react';
 import { Pressable, StyleSheet, Text, View, ViewStyle } from 'react-native';
-import Svg, { Path } from 'react-native-svg';
 
 import { LANDING } from '../tokens';
 
@@ -10,21 +9,6 @@ type Props = {
   style?: ViewStyle;
   onPress?: () => void;
 };
-
-function ArrowRight({ color }: { color: string }) {
-  return (
-    <Svg width={18} height={18} viewBox="0 0 18 18" accessibilityElementsHidden>
-      <Path
-        d="M3.5 9h10M9.5 4.5 14 9l-4.5 4.5"
-        stroke={color}
-        strokeWidth={2}
-        strokeLinecap="round"
-        strokeLinejoin="round"
-        fill="none"
-      />
-    </Svg>
-  );
-}
 
 export function GetStartedButton({
   label = 'Get Started',
@@ -47,7 +31,9 @@ export function GetStartedButton({
     >
       <View style={styles.content}>
         <Text style={styles.label}>{label}</Text>
-        <ArrowRight color={LANDING.bg} />
+        <Text style={styles.arrow} accessibilityElementsHidden>
+          →
+        </Text>
       </View>
     </Pressable>
   );
@@ -71,7 +57,7 @@ const styles = StyleSheet.create({
   content: {
     flexDirection: 'row',
     alignItems: 'center',
-    gap: 10,
+    gap: 8,
   },
   carrot: {
     backgroundColor: LANDING.carrot,
@@ -89,5 +75,12 @@ const styles = StyleSheet.create({
     color: LANDING.bg,
     fontSize: 16,
     fontFamily: 'Urbanist_600SemiBold',
+  },
+  arrow: {
+    color: LANDING.bg,
+    fontSize: 18,
+    lineHeight: 20,
+    fontFamily: 'Urbanist_600SemiBold',
+    marginTop: -1,
   },
 });
