@@ -18,8 +18,8 @@ type Props = {
 };
 
 /**
- * Opacity 0 → 1 on mount. Use one per visual unit so the page doesn’t
- * read as a single fading sheet.
+ * Opacity 0 → 1 with a slight rise on mount. Each landing unit uses this so
+ * the page blooms as pieces, not as one fading sheet.
  */
 export function FadeIn({
   children,
@@ -27,17 +27,20 @@ export function FadeIn({
   duration = ENTRANCE.duration,
   pointerEvents,
 }: Props) {
-  const opacity = useSharedValue(0);
+  const progress = useSharedValue(0);
 
   useEffect(() => {
-    opacity.value = withTiming(1, {
+    progress.value = withTiming(1, {
       duration,
       easing: Easing.out(Easing.cubic),
     });
-  }, [duration, opacity]);
+  }, [duration, progress]);
 
   const anim = useAnimatedStyle(() => ({
-    opacity: opacity.value,
+    opacity: progress.value,
+    transform: [
+      { translateY: (1 - progress.value) * ENTRANCE.rise },
+    ],
   }));
 
   return (

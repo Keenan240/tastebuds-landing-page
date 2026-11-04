@@ -46,10 +46,12 @@ export function IntroSequence({ onComplete }: Props) {
   }, [bowlBottom, viewH]);
 
   const launchTravel = useMemo(() => {
-    const rimFromBottom = bowlBottom + LAYOUT.bowlHeight;
-    const targetFromBottom = viewH - (insets.top + LAYOUT.logoTopOffset + 40);
-    return Math.max(280, targetFromBottom - rimFromBottom);
-  }, [bowlBottom, viewH, insets.top]);
+    // Shoot the smile up to the vertical middle of the screen (not the top).
+    const logoStartFromBottom =
+      bowlBottom + LAYOUT.bowlHeight - LAYOUT.logoPeekSize * 0.45;
+    const midFromBottom = viewH * 0.5;
+    return Math.max(100, midFromBottom - logoStartFromBottom);
+  }, [bowlBottom, viewH]);
 
   return (
     <View

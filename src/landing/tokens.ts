@@ -19,5 +19,7 @@ export const LANDING = {
 
 /** Simultaneous per-component entrance (not a whole-page fade). */
 export const ENTRANCE = {
-  duration: 560,
+  duration: 620,
+  /** px the piece rises while fading in */
+  rise: 16,
 } as const;

@@ -206,7 +206,7 @@ export function useIntroTimeline(onComplete?: () => void) {
       DURATIONS.peek +
       DURATIONS.holdAfterPeek;
 
-    // --- Phase F: launch to top, bowl exits, logo dissolves ---
+    // --- Phase F: launch to mid-screen, bowl exits, logo dissolves ---
     later(afterPeek, () => {
       markPhase('launch');
       logoLaunch.value = withSpring(1, SPRINGS.launch);
